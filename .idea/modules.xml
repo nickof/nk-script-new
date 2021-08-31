@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Auto.js-masterr-hyb1996source-main.iml" filepath="$PROJECT_DIR$/.idea/modules/Auto.js-masterr-hyb1996source-main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Auto.js-masterr-hyb1996source-main.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Auto.js-masterr-hyb1996source-main.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/autojs/Auto.js-masterr-hyb1996source-main.autojs.iml" filepath="$PROJECT_DIR$/.idea/modules/autojs/Auto.js-masterr-hyb1996source-main.autojs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/automator/Auto.js-masterr-hyb1996source-main.automator.iml" filepath="$PROJECT_DIR$/.idea/modules/automator/Auto.js-masterr-hyb1996source-main.automator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/Auto.js-masterr-hyb1996source-main.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/Auto.js-masterr-hyb1996source-main.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/inrt/Auto.js-masterr-hyb1996source-main.inrt.iml" filepath="$PROJECT_DIR$/.idea/modules/inrt/Auto.js-masterr-hyb1996source-main.inrt.iml" />
+    </modules>
+  </component>
+</project>
