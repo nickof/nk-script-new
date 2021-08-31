@@ -1,7 +1,9 @@
 package org.autojs.autojs.nkScript.interImp;
 
+import android.app.Application;
 import android.util.Log;
 
+import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.accessibility.AccessibilityBridge;
 import com.stardust.autojs.core.accessibility.UiSelector;
 import com.stardust.autojs.runtime.ScriptRuntime;
@@ -15,13 +17,11 @@ import java.util.Map;
 public class UiSelectorImp {
 
     private static final String TAG = UiSelectorImp.class.getSimpleName() ;
-    public final AutoJs autoJs;
-    public final ScriptRuntime scriptRuntime;
-    public final AccessibilityBridge accessibilityBridge;
+    public ScriptRuntime scriptRuntime;
+    public AccessibilityBridge accessibilityBridge;
 
-    {
-        autoJs= AutoJs.getInstance();
-        scriptRuntime=autoJs.getRunTime();
+    public UiSelectorImp() {
+        scriptRuntime=EnvScriptRuntime.getScriptRuntime();
         accessibilityBridge=scriptRuntime.accessibilityBridge;
     }
 

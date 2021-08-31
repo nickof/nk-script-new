@@ -1,4 +1,4 @@
-package com.stardust.autojs.runtime.api;
+package com.stardust.autojs.runtime.app;
 
 import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.pio.PFileInterface;

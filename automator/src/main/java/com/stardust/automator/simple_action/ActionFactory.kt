@@ -27,7 +27,7 @@ object ActionFactory {
 
     fun createActionWithTextFilter(action: Int, text: String, index: Int): SimpleAction {
         return if (searchUpAction.containsKey(action))
-            SearchUpTargetAction(action, FilterAction.TextFilter(text, index))
+            SearchUpTargetAction( action, FilterAction.TextFilter(text, index) )
         else
             DepthFirstSearchTargetAction(action, FilterAction.TextFilter(text, index))
     }

@@ -25,11 +25,10 @@ import com.stardust.util.ScreenMetrics
 class SimpleActionAutomator(private val mAccessibilityBridge: AccessibilityBridge, private val mScriptRuntime: ScriptRuntime) {
 
     private lateinit var mGlobalActionAutomator: GlobalActionAutomator
-
     private var mScreenMetrics: ScreenMetrics? = null
 
     private val isRunningPackageSelf: Boolean
-        get() = DeveloperUtils.isSelfPackage(mAccessibilityBridge.infoProvider.latestPackage)
+        get() = DeveloperUtils.isSelfPackage( mAccessibilityBridge.infoProvider.latestPackage )
 
     @ScriptInterface
     fun text(text: String, i: Int): ActionTarget {
@@ -183,15 +182,17 @@ class SimpleActionAutomator(private val mAccessibilityBridge: AccessibilityBridg
         mGlobalActionAutomator.gesturesAsync(*strokes as Array<GestureDescription.StrokeDescription>)
     }
 
-    open fun prepareForGesture() {
+    public fun prepareForGesture() {
+
         ScriptRuntime.requiresApi(24)
         if (!::mGlobalActionAutomator.isInitialized) {
-            mGlobalActionAutomator = GlobalActionAutomator(Handler(mScriptRuntime.loopers.servantLooper)) {
+            mGlobalActionAutomator = GlobalActionAutomator( Handler( mScriptRuntime.loopers.servantLooper )) {
                 ensureAccessibilityServiceEnabled()
                 return@GlobalActionAutomator mAccessibilityBridge.service!!
             }
         }
         mGlobalActionAutomator.setScreenMetrics(mScreenMetrics)
+
     }
 
     @ScriptInterface

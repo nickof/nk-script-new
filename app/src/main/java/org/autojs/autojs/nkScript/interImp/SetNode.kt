@@ -10,5 +10,7 @@ package org.autojs.autojs.nkScript.interImp
     var s搜索= mapOf<String,String>( "text" to "搜索" )
     var xx系统= mapOf<String,String>( "text" to "系统应用" )
     var y移动到屏幕2=mapOf<String,String>( "desc" to "移动到屏幕2","pa" to "2","ch" to "0,0,1,1" )
+    var ss设置= mapOf<String,String>( "text" to "设置" )
+
 
 }

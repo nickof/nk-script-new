@@ -12,8 +12,9 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
 import androidx.annotation.RequiresApi
-import com.stardust.app.isOpPermissionGranted
-import com.stardust.autojs.core.util.Shell
+//import com.stardust.app.isOpPermissionGranted
+//import com.stardust.autojs.core.util.Shell
+
 import com.stardust.view.accessibility.AccessibilityDelegate
 import java.util.regex.Pattern
 
@@ -31,15 +32,15 @@ class ActivityInfoProvider(private val context: Context) : AccessibilityDelegate
     private var mLatestActivity: String = ""
     private var mLatestComponentFromShell: ComponentName? = null
 
-    private var mShell: Shell? = null
+    /*private var mShell: Shell? = null*/
     private var mUseShell = false
 
     val latestPackage: String
         get() {
             val compFromShell = mLatestComponentFromShell
-            if (useShell && compFromShell != null) {
+         /*   if (useShell && compFromShell != null) {
                 return compFromShell.packageName
-            }
+            }*/
             if (useUsageStats && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 mLatestPackage = getLatestPackageByUsageStats()
             }
@@ -49,15 +50,15 @@ class ActivityInfoProvider(private val context: Context) : AccessibilityDelegate
     val latestActivity: String
         get() {
             val compFromShell = mLatestComponentFromShell
-            if (useShell && compFromShell != null) {
+           /* if (useShell && compFromShell != null) {
                 return compFromShell.className
-            }
+            }*/
             return mLatestActivity
         }
 
     var useUsageStats: Boolean = false
 
-    var useShell: Boolean
+   /* var useShell: Boolean
         get() = mUseShell
         set(value) {
             if (value) {
@@ -71,7 +72,7 @@ class ActivityInfoProvider(private val context: Context) : AccessibilityDelegate
                 mShell = null
             }
             mUseShell = value
-        }
+        }*/
 
     override val eventTypes: Set<Int>?
         get() = AccessibilityDelegate.ALL_EVENT_TYPES
@@ -90,10 +91,12 @@ class ActivityInfoProvider(private val context: Context) : AccessibilityDelegate
     }
 
     fun getLatestPackageByUsageStatsIfGranted(): String {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1 && context.isOpPermissionGranted(AppOpsManager.OPSTR_GET_USAGE_STATS)) {
+        //nkmodify
+   /*     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1 && context.isOpPermissionGranted(AppOpsManager.OPSTR_GET_USAGE_STATS)) {
             return getLatestPackageByUsageStats()
         }
-        return mLatestPackage
+        return mLatestPackage*/
+        return "nkmodify"
     }
 
     private fun setLatestComponentFromShellOutput(output: String) {
@@ -115,7 +118,7 @@ class ActivityInfoProvider(private val context: Context) : AccessibilityDelegate
         mLatestComponentFromShell = ComponentName(latestPackage, latestActivity)
     }
 
-    private fun createShell(dumpInterval: Int): Shell {
+  /*  private fun createShell(dumpInterval: Int): Shell {
         val shell = Shell(true)
         shell.setCallback(object : Shell.Callback {
             override fun onOutput(str: String) {
@@ -135,7 +138,7 @@ class ActivityInfoProvider(private val context: Context) : AccessibilityDelegate
         })
         shell.exec(DUMP_WINDOW_COMMAND.format(dumpInterval))
         return shell
-    }
+    }*/
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     fun getLatestPackageByUsageStats(): String {

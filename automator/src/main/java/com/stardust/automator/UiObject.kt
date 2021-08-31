@@ -27,7 +27,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.Accessibilit
 
 open class UiObject(info: Any?, private val allocator: AccessibilityNodeInfoAllocator?, depth: Int, private val mIndexInParent: Int) : AccessibilityNodeInfoCompat(info) {
 
-
     private var mStackTrace = ""
     private var mDepth = 0
 
@@ -38,9 +37,7 @@ open class UiObject(info: Any?, private val allocator: AccessibilityNodeInfoAllo
         mDepth = depth
         if (DEBUG)
             mStackTrace = Arrays.toString(Thread.currentThread().stackTrace)
-
     }
-
 
     constructor(info: Any?, allocator: AccessibilityNodeInfoAllocator, indexInParent: Int) : this(info, allocator, 0, indexInParent) {}
 

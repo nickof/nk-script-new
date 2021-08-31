@@ -5,19 +5,17 @@ import android.os.Looper;
 import android.os.MessageQueue;
 import android.util.Log;
 
-import com.stardust.autojs.rhino.AutoJsContext;
-import com.stardust.autojs.runtime.ScriptRuntime;
-import com.stardust.autojs.runtime.api.Threads;
-import com.stardust.autojs.runtime.api.Timers;
-import com.stardust.autojs.runtime.exception.ScriptInterruptedException;
-import com.stardust.lang.ThreadCompat;
+import androidx.annotation.Nullable;
 
-import org.mozilla.javascript.Context;
+import com.stardust.autojs.runtime.ScriptRuntime;
 
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import androidx.annotation.Nullable;
+//import com.stardust.autojs.runtime.api.Threads;
+//import com.stardust.autojs.runtime.api.Timers;
+//import com.stardust.autojs.runtime.exception.ScriptInterruptedException;
+//import com.stardust.lang.ThreadCompat;
 
 /**
  * Created by Stardust on 2017/7/29.
@@ -58,22 +56,26 @@ public class Loopers implements MessageQueue.IdleHandler {
     };
     private volatile ThreadLocal<CopyOnWriteArrayList<LooperQuitHandler>> looperQuitHandlers = new ThreadLocal<>();
     private volatile Looper mServantLooper;
-    private Timers mTimers;
+  //  private Timers mTimers;
     private ScriptRuntime mScriptRuntime;
     private LooperQuitHandler mMainLooperQuitHandler;
     private Handler mMainHandler;
     private Looper mMainLooper;
-    private Threads mThreads;
+  //  private Threads mThreads;
     private MessageQueue mMainMessageQueue;
 
     public Loopers(ScriptRuntime runtime) {
-        mTimers = runtime.timers;
-        mThreads = runtime.threads;
+        //nkmodify
+        //mTimers = runtime.timers;
+      //  mTimers = null;
+        //nkmodify
+        //mThreads = runtime.threads;
+       // mThreads = null;
         mScriptRuntime = runtime;
-        prepare();
+        //prepare();
         mMainLooper = Looper.myLooper();
         mMainHandler = new Handler();
-        mMainMessageQueue = Looper.myQueue();
+       // mMainMessageQueue = Looper.myQueue();
     }
 
 
@@ -99,15 +101,15 @@ public class Loopers implements MessageQueue.IdleHandler {
         if (Thread.currentThread().isInterrupted()) {
             return true;
         }
-        if (mTimers.hasPendingCallbacks()) {
+   /*     if (mTimers.hasPendingCallbacks()) {
             return false;
-        }
+        }*/
         if (waitWhenIdle.get() || !waitIds.get().isEmpty()) {
             return false;
         }
-        if (((AutoJsContext) Context.getCurrentContext()).hasPendingContinuation()) {
+    /*    if (((AutoJsContext) Context.getCurrentContext()).hasPendingContinuation()) {
             return false;
-        }
+        }*/
         CopyOnWriteArrayList<LooperQuitHandler> handlers = looperQuitHandlers.get();
         if (handlers == null) {
             return true;
@@ -122,7 +124,7 @@ public class Loopers implements MessageQueue.IdleHandler {
 
 
     private void initServantThread() {
-        new ThreadCompat(() -> {
+/*        new ThreadCompat(() -> {
             Looper.prepare();
             final Object lock = Loopers.this;
             mServantLooper = Looper.myLooper();
@@ -130,7 +132,7 @@ public class Loopers implements MessageQueue.IdleHandler {
                 lock.notifyAll();
             }
             Looper.loop();
-        }).start();
+        }).start();*/
     }
 
     public Looper getServantLooper() {
@@ -140,7 +142,7 @@ public class Loopers implements MessageQueue.IdleHandler {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    throw new ScriptInterruptedException();
+                   // throw new ScriptInterruptedException();
                 }
             }
         }
@@ -186,11 +188,11 @@ public class Loopers implements MessageQueue.IdleHandler {
             return true;
         if (l == mMainLooper) {
             Log.d(LOG_TAG, "main looper queueIdle");
-            if (shouldQuitLooper() && !mThreads.hasRunningThreads() &&
+     /*       if (shouldQuitLooper() && !mThreads.hasRunningThreads() &&
                     mMainLooperQuitHandler != null && mMainLooperQuitHandler.shouldQuit()) {
                 Log.d(LOG_TAG, "main looper quit");
                 l.quit();
-            }
+            }*/
         } else {
             Log.d(LOG_TAG, "looper queueIdle: " + l);
             if (shouldQuitLooper()) {
@@ -200,7 +202,7 @@ public class Loopers implements MessageQueue.IdleHandler {
         return true;
     }
 
-    public void prepare() {
+  /*  public void prepare() {
         if (Looper.myLooper() == null)
             LooperHelper.prepare();
         Looper.myQueue().addIdleHandler(this);
@@ -211,5 +213,5 @@ public class Loopers implements MessageQueue.IdleHandler {
         //当子线程退成时，主线程需要检查自身是否退出（主线程在所有子线程执行完成后才能退出，如果主线程已经执行完任务仍然要等待所有子线程），
         //此时通过向主线程发送一个空的Runnable，主线程执行完这个Runnable后会触发IdleHandler，从而检查自身是否退出
         mMainHandler.post(EMPTY_RUNNABLE);
-    }
+    }*/
 }

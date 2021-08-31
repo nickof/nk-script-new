@@ -2,15 +2,17 @@ package com.stardust.automator
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.content.ContentValues.TAG
 import android.graphics.Path
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import android.view.ViewConfiguration
 
-import com.stardust.concurrent.VolatileBox
-import com.stardust.concurrent.VolatileDispose
+//import com.stardust.concurrent.VolatileBox
+//import com.stardust.concurrent.VolatileDispose
 import com.stardust.util.ScreenMetrics
 
 /**
@@ -22,6 +24,7 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
     private val service: AccessibilityService
         get() = serviceProvider()
 
+    public  final  val TAG = "GlobalActionAutomator"
     private var mScreenMetrics: ScreenMetrics? = null
 
     fun setScreenMetrics(screenMetrics: ScreenMetrics?) {
@@ -86,21 +89,23 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     fun gestures(vararg strokes: GestureDescription.StrokeDescription): Boolean {
+
         val builder = GestureDescription.Builder()
         for (stroke in strokes) {
             builder.addStroke(stroke)
         }
         val handler = mHandler
-        return if (handler == null) {
-            gesturesWithoutHandler(builder.build())
+        return if ( handler == null ) {
+            gesturesWithoutHandler( builder.build() )
         } else {
-            gesturesWithHandler(handler, builder.build())
+            gesturesWithHandler( handler, builder.build() )
         }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private fun gesturesWithHandler(handler: Handler, description: GestureDescription): Boolean {
-        val result = VolatileDispose<Boolean>()
+/*        val result = VolatileDispose<Boolean>()
         service.dispatchGesture(description, object : AccessibilityService.GestureResultCallback() {
             override fun onCompleted(gestureDescription: GestureDescription) {
                 result.setAndNotify(true)
@@ -110,12 +115,13 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
                 result.setAndNotify(false)
             }
         }, handler)
-        return result.blockedGet()
+        return result.blockedGet()*/
+        return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private fun gesturesWithoutHandler(description: GestureDescription): Boolean {
-        prepareLooperIfNeeded()
+/*        prepareLooperIfNeeded()
         val result = VolatileBox(false)
         val handler = Handler(Looper.myLooper())
         service.dispatchGesture(description, object : AccessibilityService.GestureResultCallback() {
@@ -130,7 +136,8 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
             }
         }, handler)
         Looper.loop()
-        return result.get()
+        return result.get()*/
+        return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -155,6 +162,7 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     fun click(x: Int, y: Int): Boolean {
+        Log.d( TAG , "click: run" )
         return press(x, y, ViewConfiguration.getTapTimeout() + 50)
     }
 
@@ -178,6 +186,7 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     fun swipe(x1: Int, y1: Int, x2: Int, y2: Int, delay: Long): Boolean {
+        Log.d( TAG , "swipe: run" )
         return gesture(0, delay, intArrayOf(x1, y1), intArrayOf(x2, y2))
     }
 

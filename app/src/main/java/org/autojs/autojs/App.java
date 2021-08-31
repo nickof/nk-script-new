@@ -5,12 +5,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.multidex.MultiDex;
 
 import com.nk.nkscript.tinker.Log.MyLogImp;
 import com.nk.nkscript.tinker.util.SampleApplicationContext;
 import com.nk.nkscript.tinker.util.TinkerManager;
+import com.stardust.app.GlobalAppContext;
 import com.tencent.tinker.anno.DefaultLifeCycle;
 import com.tencent.tinker.entry.ApplicationLifeCycle;
 import com.tencent.tinker.entry.DefaultApplicationLike;
@@ -63,6 +65,7 @@ public class App extends DefaultApplicationLike {
     @Override
     public void onBaseContextAttached(Context base) {
         super.onBaseContextAttached(base);
+        GlobalAppContext.set(getApplication());
         //you must install multiDex whatever tinker is installed!
         MultiDex.install(base);
 
@@ -81,11 +84,13 @@ public class App extends DefaultApplicationLike {
         //or you can put com.tencent.tinker.** to main dex
         TinkerManager.installTinker(this);
         Tinker tinker = Tinker.with(getApplication());
+
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void registerActivityLifecycleCallbacks(Application.ActivityLifecycleCallbacks callback) {
         getApplication().registerActivityLifecycleCallbacks(callback);
     }
+
 
 }

@@ -1,10 +1,12 @@
 package com.stardust.view.accessibility
 
+
 import android.os.Build
 import android.util.Log
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+//import com.stardust.autojs.myScript.MyScriptApi
 import com.stardust.event.EventDispatcher
 
 import java.util.HashSet
@@ -25,8 +27,8 @@ open class AccessibilityService : android.accessibilityservice.AccessibilityServ
         fun onGesture(gestureId: Int)
     }
 
-    val onKeyObserver = OnKeyListener.Observer()
-    val keyInterrupterObserver = KeyInterceptor.Observer()
+//    val onKeyObserver = OnKeyListener.Observer()
+//    val keyInterrupterObserver = KeyInterceptor.Observer()
     val gestureEventDispatcher = EventDispatcher<GestureListener>()
     private var mEventExecutor: ExecutorService? = null
     private var mFastRootInActiveWindow: AccessibilityNodeInfo? = null
@@ -52,7 +54,8 @@ open class AccessibilityService : android.accessibilityservice.AccessibilityServ
             }
         }
 
-        for ((_, delegate) in mDelegates) {
+        for ( (_, delegate) in mDelegates ) {
+
             val types = delegate.eventTypes
             if (types != null && !delegate.eventTypes!!.contains(event.eventType))
                 continue
@@ -60,6 +63,7 @@ open class AccessibilityService : android.accessibilityservice.AccessibilityServ
             if (delegate.onAccessibilityEvent(this@AccessibilityService, event))
                 break
             //Log.v(TAG, "millis: " + (System.currentTimeMillis() - start) + " delegate: " + entry.getValue().getClass().getName());
+
         }
     }
 
@@ -69,12 +73,12 @@ open class AccessibilityService : android.accessibilityservice.AccessibilityServ
     }
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
-        Log.d(TAG,"onKeyEvent"+event.toString() )
-        eventExecutor.execute {
-            stickOnKeyObserver.onKeyEvent(event.keyCode, event)
-            onKeyObserver.onKeyEvent(event.keyCode, event)
-        }
-        return keyInterrupterObserver.onInterceptKeyEvent(event)
+//        eventExecutor.execute {
+//            stickOnKeyObserver.onKeyEvent(event.keyCode, event)
+//            onKeyObserver.onKeyEvent(event.keyCode, event)
+//        }
+//        return keyInterrupterObserver.onInterceptKeyEvent(event)
+        return false;
     }
 
     override fun onGesture(gestureId: Int): Boolean {
@@ -127,7 +131,7 @@ open class AccessibilityService : android.accessibilityservice.AccessibilityServ
         private val ENABLED = LOCK.newCondition()
         var instance: AccessibilityService? = null
             private set
-        val stickOnKeyObserver = OnKeyListener.Observer()
+        //val stickOnKeyObserver = OnKeyListener.Observer()
         private var containsAllEventTypes = false
         private val eventTypes = HashSet<Int>()
 

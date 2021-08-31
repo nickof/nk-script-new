@@ -1,27 +1,24 @@
 package com.stardust.autojs.core.accessibility;
 
-import android.app.ActivityManager;
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.os.Build;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityWindowInfo;
 
-import com.stardust.app.AppOpsKt;
-import com.stardust.autojs.runtime.accessibility.AccessibilityConfig;
-import com.stardust.util.IntentUtil;
-import com.stardust.util.UiHandler;
+import androidx.annotation.Nullable;
+
 import com.stardust.autojs.core.activity.ActivityInfoProvider;
-import com.stardust.view.accessibility.AccessibilityNotificationObserver;
+import com.stardust.autojs.runtime.accessibility.AccessibilityConfig;
+import com.stardust.util.UiHandler;
 import com.stardust.view.accessibility.AccessibilityService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+//import com.stardust.app.AppOpsKt;
+//import com.stardust.util.IntentUtil;
+//import com.stardust.view.accessibility.AccessibilityNotificationObserver;
 
 
 /**
@@ -57,8 +54,6 @@ public abstract class AccessibilityBridge {
 
     public abstract void ensureServiceEnabled();
 
-    public abstract void waitForServiceEnabled();
-
     public void post(Runnable r) {
         mUiHandler.post(r);
     }
@@ -66,6 +61,7 @@ public abstract class AccessibilityBridge {
     @Nullable
     public abstract AccessibilityService getService();
 
+    //保留
     public List<AccessibilityNodeInfo> windowRoots() {
         AccessibilityService service = getService();
         if (service == null)
@@ -131,7 +127,7 @@ public abstract class AccessibilityBridge {
         return mFlags;
     }
 
-    public void setFlags(int flags) {
+/*    public void setFlags(int flags) {
         mFlags = flags;
         if ((mFlags & FLAG_USE_USAGE_STATS) != 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!AppOpsKt.isOpPermissionGranted(mContext, AppOpsManager.OPSTR_GET_USAGE_STATS)) {
@@ -141,11 +137,11 @@ public abstract class AccessibilityBridge {
         }
         getInfoProvider().setUseUsageStats((mFlags & FLAG_USE_USAGE_STATS) != 0);
         getInfoProvider().setUseShell((mFlags & FLAG_USE_SHELL) != 0);
-    }
+    }*/
 
-    @NonNull
+   /* @NonNull
     public abstract AccessibilityNotificationObserver getNotificationObserver();
-
+*/
     public AccessibilityConfig getConfig() {
         return mConfig;
     }

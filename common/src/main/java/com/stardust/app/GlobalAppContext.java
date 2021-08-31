@@ -30,6 +30,7 @@ public class GlobalAppContext {
         sApplicationContext = a.getApplicationContext();
     }
 
+
     public static Context get() {
         if (sApplicationContext == null)
             throw new IllegalStateException("Call GlobalAppContext.set() to set a application context");
@@ -114,5 +115,6 @@ public class GlobalAppContext {
     public static void postDelayed(Runnable r, long m) {
         sHandler.postDelayed(r, m);
     }
-    
+
+
 }

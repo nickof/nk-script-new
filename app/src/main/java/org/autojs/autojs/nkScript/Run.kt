@@ -3,13 +3,12 @@ package org.autojs.autojs.nkScript
 import android.app.Application
 import android.util.Log
 import com.stardust.app.GlobalAppContext
+import com.stardust.autojs.runtime.api.Images
 import org.autojs.autojs.autojs.AutoJs
-import org.autojs.autojs.nkScript.interImp.InterMy
-import org.autojs.autojs.nkScript.interImp.SetNode
-import org.autojs.autojs.nkScript.interImp.SimpleActionAutomatorImp
-import org.autojs.autojs.nkScript.interImp.UiSelectorImp
+import org.autojs.autojs.nkScript.interImp.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.log
 
 class Run {
 
@@ -22,6 +21,8 @@ class Run {
 
     var clk: SimpleActionAutomatorImp? = null
     lateinit var node: UiSelectorImp;
+    lateinit var images: Images;
+
 
     fun main(){
         init()
@@ -67,9 +68,9 @@ class Run {
             var ver="0831"
             GlobalAppContext.toast("ver="+ver+i )
             Log.d(TAG,"ver="+ver);
-
+/*
             try {
-                var ret= node.fnode(setNode.y移动到屏幕2 );
+                var ret= node.fnode(setNode.ss设置 );
                 if (ret!=null){
                     Log.d(TAG,"bounds="+ret.bounds()   )
                     ret.click();
@@ -83,15 +84,25 @@ class Run {
                 Log.d(TAG, "jk2: InterruptedException")
                 e.printStackTrace()
                 break
+            }*/
+            try {
+                Thread.sleep(1000)
+            } catch (e: Exception) {
+                    return;
             }
 
         }
     }
 
     fun init(){
-        AutoJs.initInstance(GlobalAppContext.get() as Application?)
+        Log.d(TAG,"init")
+        if (GlobalAppContext.get()==null)
+            Log.d(TAG,"application null")
+        else
+            Log.d(TAG,"application not null")
         clk = SimpleActionAutomatorImp()
         node = UiSelectorImp()
+        images=ImagesImp().images;
     }
 
 }

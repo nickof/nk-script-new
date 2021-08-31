@@ -6,7 +6,8 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
-import com.stardust.automator.BuildConfig
+//import com.stardust.automator.BuildConfig
+import com.stardust.BuildConfig
 
 import java.util.Arrays
 import java.util.HashMap
@@ -84,7 +85,7 @@ open class AccessibilityNodeInfoAllocator {
                 key.recycle()
                 notRecycledCount++
                 if (DEBUG)
-                    Log.w(TAG, value)
+                    value?.let { Log.w(TAG, it) }
             } catch (ignored: IllegalStateException) {
             }
 

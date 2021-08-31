@@ -11,12 +11,11 @@ import android.media.Image;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.annotation.RequiresApi;
-
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
+
+import androidx.annotation.RequiresApi;
 
 import com.stardust.autojs.annotation.ScriptVariable;
 import com.stardust.autojs.core.image.ColorFinder;
@@ -45,8 +44,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -194,13 +191,14 @@ public class Images {
     }
 
     public ImageWrapper read(String path) {
+        //modify
         path = mScriptRuntime.files.path(path);
         Bitmap bitmap = BitmapFactory.decodeFile(path);
         return ImageWrapper.ofBitmap(bitmap);
     }
 
     public ImageWrapper read2(String path) {
-        //path = mScriptRuntime.files.path(path);
+        path = mScriptRuntime.files.path(path);
         Bitmap bitmap = BitmapFactory.decodeFile(path);
         return ImageWrapper.ofBitmap(bitmap);
     }
@@ -303,7 +301,7 @@ public class Images {
         if (rect != null) {
             src = new Mat(src, rect);
         }
-        org.opencv.core.Point point = TemplateMatching.fastTemplateMatching(src, template.getMat(), TemplateMatching.MATCHING_METHOD_DEFAULT,
+        Point point = TemplateMatching.fastTemplateMatching(src, template.getMat(), TemplateMatching.MATCHING_METHOD_DEFAULT,
                 weakThreshold, threshold, maxLevel);
         if (point != null) {
             if (rect != null) {
@@ -361,18 +359,19 @@ public class Images {
         }
         Activity currentActivity = mScriptRuntime.app.getCurrentActivity();
         Context context = currentActivity == null ? mContext : currentActivity;
-        mScriptRuntime.console.info("opencv initializing");
+        //modify
+//        mScriptRuntime.console.info("opencv initializing");
         if (Looper.myLooper() == Looper.getMainLooper()) {
             OpenCVHelper.initIfNeeded(context, () -> {
                 mOpenCvInitialized = true;
-                mScriptRuntime.console.info("opencv initialized");
+//                mScriptRuntime.console.info("opencv initialized");
             });
         } else {
             VolatileDispose<Boolean> result = new VolatileDispose<>();
             OpenCVHelper.initIfNeeded(context, () -> {
                 mOpenCvInitialized = true;
                 result.setAndNotify(true);
-                mScriptRuntime.console.info("opencv initialized");
+//                mScriptRuntime.console.info("opencv initialized");
             });
             result.blockedGet();
         }

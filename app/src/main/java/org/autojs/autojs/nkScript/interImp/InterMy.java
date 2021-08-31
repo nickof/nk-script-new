@@ -15,7 +15,7 @@ import org.autojs.autojs.nkScript.functionInterface.FunInterThreadMethod;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-//import com.stardust.nkScript.ScriptService;
+
 
 public class InterMy {
 
@@ -39,6 +39,9 @@ public class InterMy {
                 case KeyEvent.KEYCODE_VOLUME_UP:
                     Log.i(TAG, "KEYCODE_VOLUME_UP");
                     application= (Application) GlobalAppContext.get();
+                    if (application==null)
+                        Log.d(TAG, "volEventDo: application is null");
+                   //intent=new Intent( application, ScriptService.class );
                     intent=new Intent( application, ScriptService.class );
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

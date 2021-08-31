@@ -2,11 +2,10 @@ package com.stardust.autojs.core.accessibility;
 
 import android.os.Looper;
 import android.os.SystemClock;
-
-import androidx.annotation.NonNull;
-
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import androidx.annotation.NonNull;
 
 import com.stardust.autojs.BuildConfig;
 import com.stardust.autojs.annotation.ScriptInterface;
@@ -97,10 +96,11 @@ public class UiSelector extends UiGlobalSelector {
     @NonNull
     @ScriptInterface
     protected UiObjectCollection findImpl(int max) {
+
         List<AccessibilityNodeInfo> roots = mAccessibilityBridge.windowRoots();
-        if (BuildConfig.DEBUG)
+        if ( BuildConfig.DEBUG )
             Log.d(TAG, "find: roots = " + roots);
-        if (roots.isEmpty()) {
+        if ( roots.isEmpty() ) {
             return UiObjectCollection.Companion.getEMPTY();
         }
         List<UiObject> result = new ArrayList<>();
@@ -118,6 +118,7 @@ public class UiSelector extends UiGlobalSelector {
             }
         }
         return UiObjectCollection.Companion.of(result);
+
     }
 
     @Override
@@ -416,4 +417,5 @@ public class UiSelector extends UiGlobalSelector {
                 new ActionArgument.IntActionArgument(ACTION_ARGUMENT_ROW_INT, row),
                 new ActionArgument.IntActionArgument(ACTION_ARGUMENT_COLUMN_INT, column));
     }
+
 }
