@@ -22,6 +22,7 @@ class Run {
     var clk: SimpleActionAutomatorImp? = null
     lateinit var node: UiSelectorImp;
     lateinit var images: Images;
+    lateinit var imagesImp: ImagesImp;
 
 
     fun main(){
@@ -60,12 +61,14 @@ class Run {
 
     fun jk2() {
 
+        imagesImp.waitPermission();
+
         var i:Int=0;
         while (true) {
 
             ++i;
             Log.d(TAG, "jk2: run")
-            var ver="0831"
+            var ver="0831b"
             GlobalAppContext.toast("ver="+ver+i )
             Log.d(TAG,"ver="+ver);
 /*
@@ -95,6 +98,7 @@ class Run {
     }
 
     fun init(){
+
         Log.d(TAG,"init")
         if (GlobalAppContext.get()==null)
             Log.d(TAG,"application null")
@@ -102,7 +106,9 @@ class Run {
             Log.d(TAG,"application not null")
         clk = SimpleActionAutomatorImp()
         node = UiSelectorImp()
-        images=ImagesImp().images;
+        imagesImp=ImagesImp();
+        images=imagesImp.images as Images;
+
     }
 
 }

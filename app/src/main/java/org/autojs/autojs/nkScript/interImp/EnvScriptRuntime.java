@@ -8,7 +8,7 @@ import com.stardust.autojs.runtime.ScriptRuntime;
 import org.autojs.autojs.autojs.AutoJs;
 
 public class EnvScriptRuntime {
-    private  static volatile AutoJs autoJs;
+    private  static AutoJs autoJs;
 
     private static void  autoJsInit(){
         AutoJs.initInstance((Application) GlobalAppContext.get());

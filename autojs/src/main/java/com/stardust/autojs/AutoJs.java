@@ -15,6 +15,7 @@ import com.stardust.app.OnActivityResultDelegate;
 import com.stardust.app.SimpleActivityLifecycleCallbacks;
 import com.stardust.autojs.core.accessibility.AccessibilityBridge;
 import com.stardust.autojs.core.activity.ActivityInfoProvider;
+import com.stardust.autojs.core.image.capture.ScreenCaptureRequestActivity;
 import com.stardust.autojs.core.image.capture.ScreenCaptureRequester;
 import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.autojs.runtime.accessibility.AccessibilityConfig;
@@ -182,6 +183,7 @@ public abstract class AutoJs {
 
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                Log.d(TAG, "onActivityCreated: SimpleActivityLifecycleCallbacks");
                 ScreenMetrics.initIfNeeded(activity);
                 mAppUtils.setCurrentActivity(activity);
             }
@@ -300,12 +302,13 @@ public abstract class AutoJs {
                         ((OnActivityResultDelegate.DelegateHost) activity).getOnActivityResultDelegateMediator(), activity);
                 requester.setOnActivityResultCallback(mCallback);
                 requester.request();
-                if (true) {
+//               if (true) {
                 } else {
-                   // ScreenCaptureRequestActivity.request(mContext, mCallback);
-                }
+                   ScreenCaptureRequestActivity.request(mContext, mCallback);
             }
         }
+
+
     }
 
 

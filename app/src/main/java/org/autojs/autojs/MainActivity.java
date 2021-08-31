@@ -47,6 +47,8 @@ import com.tencent.tinker.lib.tinker.TinkerInstaller;
 import com.tencent.tinker.loader.shareutil.ShareConstants;
 import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
+import org.autojs.autojs.nkScript.interImp.EnvScriptRuntime;
+
 
 public class MainActivity extends  AppCompatActivity {
     private static final String TAG = "Tinker.MainActivity";
@@ -59,6 +61,7 @@ public class MainActivity extends  AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main );
         GlobalAppContext.set( getApplication() );
+        EnvScriptRuntime.getAutoJs();
 
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
         Log.e(TAG, "ARK HOT Running status = " + isARKHotRunning);

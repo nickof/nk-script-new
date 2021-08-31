@@ -41,7 +41,7 @@ public class ScriptService extends Service {
         Log.d(TAG, "onCreate: run++");
         super.onCreate();
   //      Context appCotext=GlobalAppContext.get();
-         GlobalAppContext.set((Application) getApplicationContext());
+         //GlobalAppContext.set((Application) getApplicationContext());
         NotificationManager notificationManager = (NotificationManager)this.
                 getSystemService( getApplicationContext().NOTIFICATION_SERVICE );
         NotificationChannel mChannel = null;

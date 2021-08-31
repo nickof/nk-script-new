@@ -65,7 +65,7 @@ public class App extends DefaultApplicationLike {
     @Override
     public void onBaseContextAttached(Context base) {
         super.onBaseContextAttached(base);
-        GlobalAppContext.set(getApplication());
+       // GlobalAppContext.set(getApplication());
         //you must install multiDex whatever tinker is installed!
         MultiDex.install(base);
 

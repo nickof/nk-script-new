@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.stardust.autojs.runtime.ScriptRuntime;
+import com.stardust.lang.ThreadCompat;
 
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -65,6 +66,7 @@ public class Loopers implements MessageQueue.IdleHandler {
     private MessageQueue mMainMessageQueue;
 
     public Loopers(ScriptRuntime runtime) {
+        Log.d(LOG_TAG,"Loopers(ScriptRuntime runtime)");
         //nkmodify
         //mTimers = runtime.timers;
       //  mTimers = null;
@@ -75,7 +77,7 @@ public class Loopers implements MessageQueue.IdleHandler {
         //prepare();
         mMainLooper = Looper.myLooper();
         mMainHandler = new Handler();
-       // mMainMessageQueue = Looper.myQueue();
+        //mMainMessageQueue = Looper.myQueue();
     }
 
 
@@ -124,7 +126,7 @@ public class Loopers implements MessageQueue.IdleHandler {
 
 
     private void initServantThread() {
-/*        new ThreadCompat(() -> {
+        new ThreadCompat(() -> {
             Looper.prepare();
             final Object lock = Loopers.this;
             mServantLooper = Looper.myLooper();
@@ -132,7 +134,7 @@ public class Loopers implements MessageQueue.IdleHandler {
                 lock.notifyAll();
             }
             Looper.loop();
-        }).start();*/
+        }).start();
     }
 
     public Looper getServantLooper() {
@@ -202,12 +204,12 @@ public class Loopers implements MessageQueue.IdleHandler {
         return true;
     }
 
-  /*  public void prepare() {
+  public void prepare() {
         if (Looper.myLooper() == null)
             LooperHelper.prepare();
         Looper.myQueue().addIdleHandler(this);
     }
-
+ /*
     public void notifyThreadExit(TimerThread thread) {
         Log.d(LOG_TAG, "notifyThreadExit: " + thread);
         //当子线程退成时，主线程需要检查自身是否退出（主线程在所有子线程执行完成后才能退出，如果主线程已经执行完任务仍然要等待所有子线程），
