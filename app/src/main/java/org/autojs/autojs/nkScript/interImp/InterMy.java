@@ -72,6 +72,8 @@ public class InterMy {
                 } catch (InterruptedException e) {
                     Log.d(TAG, "ThreadStart: InterruptedException="+e.toString() );
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } );
         }

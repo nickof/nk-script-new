@@ -20,9 +20,12 @@ import com.stardust.autojs.core.image.capture.ScreenCaptureRequester;
 import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.autojs.runtime.accessibility.AccessibilityConfig;
 import com.stardust.autojs.runtime.app.AppUtils;
+import com.stardust.util.ResourceMonitor;
 import com.stardust.util.ScreenMetrics;
 import com.stardust.util.UiHandler;
 import com.stardust.view.accessibility.AccessibilityService;
+
+import org.mozilla.javascript.WrappedException;
 
 //import com.stardust.autojs.core.image.capture.ScreenCaptureRequestActivity;
 
@@ -108,7 +111,7 @@ public abstract class AutoJs {
     protected void init() {
         //addAccessibilityServiceDelegates();
         registerActivityLifecycleCallbacks();
-/*        ResourceMonitor.setExceptionCreator(resource -> {
+  /*      ResourceMonitor.setExceptionCreator(resource -> {
             Exception exception;
             if (org.mozilla.javascript.Context.getCurrentContext() != null) {
                 exception = new WrappedException(new ResourceMonitor.UnclosedResourceException(resource));
@@ -117,9 +120,8 @@ public abstract class AutoJs {
             }
             exception.fillInStackTrace();
             return exception;
-        });
-        ResourceMonitor.setUnclosedResourceDetectedHandler(detectedException -> mGlobalConsole.error(detectedException));
-    */
+        });*/
+        //ResourceMonitor.setUnclosedResourceDetectedHandler(detectedException -> mGlobalConsole.error(detectedException));
     }
 
     public abstract void ensureAccessibilityServiceEnabled();

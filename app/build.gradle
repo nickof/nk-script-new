@@ -122,12 +122,12 @@ android {
 
 
         buildTypes {
-            sourceSets {
+           /* sourceSets {
                 main {
                     jniLibs.srcDirs = ['libs']
                 }
             }
-
+*/
             release {
                 // multiDexKeepFile file ('multidex-config.txt')
                 //debuggable false

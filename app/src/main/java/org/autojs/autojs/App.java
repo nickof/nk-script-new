@@ -68,6 +68,7 @@ public class App extends DefaultApplicationLike {
        // GlobalAppContext.set(getApplication());
         //you must install multiDex whatever tinker is installed!
         MultiDex.install(base);
+       // GlobalAppContext.setContext( base );
 
         SampleApplicationContext.application = getApplication();
         SampleApplicationContext.context = getApplication();
@@ -85,6 +86,12 @@ public class App extends DefaultApplicationLike {
         TinkerManager.installTinker(this);
         Tinker tinker = Tinker.with(getApplication());
 
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        GlobalAppContext.set(getApplication());
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

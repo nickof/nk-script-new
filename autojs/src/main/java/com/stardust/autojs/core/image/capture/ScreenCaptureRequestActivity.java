@@ -1,10 +1,12 @@
 package com.stardust.autojs.core.image.capture;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -12,12 +14,36 @@ import androidx.annotation.RequiresApi;
 import com.stardust.app.OnActivityResultDelegate;
 import com.stardust.util.IntentExtras;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+
 /**
  * Created by Stardust on 2017/5/22.
  */
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ScreenCaptureRequestActivity extends Activity {
+    private static final String TAG ="ScreenCapture" ;
+    //openCV4Android 需要加载用到
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i("ScreenCapture", "OpenCV loaded successfully");
+//                    mOpenCvCameraView.enableView();
+//                    mOpenCvCameraView.setOnTouchListener(ColorBlobDetectionActivity.this);
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
 
     private OnActivityResultDelegate.Mediator mOnActivityResultDelegateMediator = new OnActivityResultDelegate.Mediator();
     private ScreenCaptureRequester mScreenCaptureRequester;
@@ -30,6 +56,18 @@ public class ScreenCaptureRequestActivity extends Activity {
                 .put("callback", callback)
                 .putInIntent(intent);
         context.startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+  /*      if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }*/
     }
 
     @Override

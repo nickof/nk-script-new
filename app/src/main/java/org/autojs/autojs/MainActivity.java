@@ -19,11 +19,13 @@ package org.autojs.autojs;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -48,6 +50,9 @@ import com.tencent.tinker.loader.shareutil.ShareConstants;
 import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 import org.autojs.autojs.nkScript.interImp.EnvScriptRuntime;
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 
 
 public class MainActivity extends  AppCompatActivity {
@@ -55,12 +60,34 @@ public class MainActivity extends  AppCompatActivity {
 
     private TextView mTvMessage = null;
 
+    //openCV4Android 需要加载用到
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i(TAG, "OpenCV loaded successfully");
+//                    mOpenCvCameraView.enableView();
+//                    mOpenCvCameraView.setOnTouchListener(ColorBlobDetectionActivity.this);
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main );
-        GlobalAppContext.set( getApplication() );
+        //GlobalAppContext.set( getApplication() );
         EnvScriptRuntime.getAutoJs();
 
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
@@ -126,6 +153,17 @@ public class MainActivity extends  AppCompatActivity {
                 showInfo(MainActivity.this);
             }
         });
+
+        Button  button_open_accessibility = (Button) findViewById(R.id.open_accessibility );
+
+        button_open_accessibility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //showInfo(MainActivity.this);
+                getApplication().startActivity( new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        });
+
     }
 
     private void askForRequiredPermissions() {
@@ -198,8 +236,15 @@ public class MainActivity extends  AppCompatActivity {
 //        Log.e(TAG, "i am on patch onResume");
 
         super.onResume();
-        Utils.setBackground( false );
+   /*     if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }*/
 
+        Utils.setBackground( false );
         if (hasRequiredPermissions()) {
             mTvMessage.setVisibility(View.GONE);
         } else {
@@ -207,6 +252,7 @@ public class MainActivity extends  AppCompatActivity {
             mTvMessage.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
             mTvMessage.setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override

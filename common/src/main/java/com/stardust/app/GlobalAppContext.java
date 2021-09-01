@@ -23,6 +23,8 @@ public class GlobalAppContext {
     public static Toast toastObj;
     public static String TAG="GlobalAppContext";
 
+    //public static BaseLoaderCallback mLoaderCallback;
+
     public static long toastLastTime=System.currentTimeMillis();
 
     public static void set(Application a) {
@@ -30,6 +32,10 @@ public class GlobalAppContext {
         sApplicationContext = a.getApplicationContext();
     }
 
+    public static void setContext(Context a) {
+        sHandler = new Handler(Looper.getMainLooper());
+        sApplicationContext = a;
+    }
 
     public static Context get() {
         if (sApplicationContext == null)

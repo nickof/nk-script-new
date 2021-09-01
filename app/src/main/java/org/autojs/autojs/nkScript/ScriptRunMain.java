@@ -178,10 +178,6 @@ public class ScriptRunMain {
         }
     }
 
-    public void ThreadStart( ExecutorService executorService, FunInterThreadMethod functionalInterface  ){
-        for (int i=0;i<1;i++){
-            executorService.execute( ()->{ functionalInterface.excute(); } );
-        }
-    }
+
 
 }
