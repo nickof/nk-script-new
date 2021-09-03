@@ -167,4 +167,5 @@ public class ImageWrapper {
         }
         return new ImageWrapper(mBitmap.copy(mBitmap.getConfig(), true), mMat.clone());
     }
+
 }

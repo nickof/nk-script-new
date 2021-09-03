@@ -1,7 +1,9 @@
 package com.stardust.autojs.core.image;
 
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -10,6 +12,7 @@ import com.stardust.autojs.core.opencv.MatOfPoint;
 import com.stardust.autojs.core.opencv.OpenCVHelper;
 import com.stardust.util.ScreenMetrics;
 
+import org.apache.log4j.lf5.viewer.LogBrokerMonitor;
 import org.opencv.core.Core;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -22,6 +25,7 @@ import org.opencv.core.Scalar;
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class ColorFinder {
 
+    private static final String TAG ="ColorFinder" ;
     private ScreenMetrics mScreenMetrics;
 
     public ColorFinder(ScreenMetrics screenMetrics) {
@@ -62,6 +66,7 @@ public class ColorFinder {
         }
         Point[] points = matOfPoint.toArray();
         OpenCVHelper.release(matOfPoint);
+        Log.d(TAG,"findAllPointsForColor");
         if (rect != null) {
             for (int i = 0; i < points.length; i++) {
                 points[i].x = mScreenMetrics.scaleX((int) (points[i].x + rect.x));
@@ -72,40 +77,57 @@ public class ColorFinder {
     }
 
     private MatOfPoint findColorInner(ImageWrapper image, int color, int threshold, Rect rect) {
+        
+        Log.d(TAG, "findColorInner: run");
         Mat bi = new Mat();
-        Scalar lowerBound = new Scalar(Color.red(color) - threshold, Color.green(color) - threshold,
+        Log.d(TAG, "findColorInner: run2");
+        Log.d(TAG, "findColorInner: run2"+color+","+Color.red(color) );
+
+        Scalar lowerBound = new Scalar(Color.red(color) - threshold, Color.green( color ) - threshold,
                 Color.blue(color) - threshold, 255);
-        Scalar upperBound = new Scalar(Color.red(color) + threshold, Color.green(color) + threshold,
+        Scalar upperBound = new Scalar(Color.red(color) + threshold, Color.green( color ) + threshold,
                 Color.blue(color) + threshold, 255);
+
+        Log.d(TAG, "findColorInner: run3"+rect );
         if (rect != null) {
+            Log.d(TAG, "findColorInner: run3-if");
             Mat m = new Mat(image.getMat(), rect);
             Core.inRange(m, lowerBound, upperBound, bi);
             OpenCVHelper.release(m);
         } else {
             Core.inRange(image.getMat(), lowerBound, upperBound, bi);
         }
+
+        Log.d(TAG, "findColorInner: run4");
         Mat nonZeroPos = new Mat();
         Core.findNonZero(bi, nonZeroPos);
+        Log.d(TAG, "findColorInner: run5");
         MatOfPoint result;
         if (nonZeroPos.rows() == 0 || nonZeroPos.cols() == 0) {
             result = null;
         } else {
             result = OpenCVHelper.newMatOfPoint(nonZeroPos);
         }
+        Log.d(TAG, "findColorInner: run6");
         OpenCVHelper.release(bi);
         OpenCVHelper.release(nonZeroPos);
+        Log.d(TAG, "findColorInner: run7"+result);
+
         return result;
     }
 
     public Point findMultiColors(ImageWrapper image, int firstColor, int threshold, Rect rect, int[] points) {
         Point[] firstPoints = findAllPointsForColor(image, firstColor, threshold, rect);
+        Log.d(TAG,"findMultiColors-1" );
         for (Point firstPoint : firstPoints) {
-            if (firstPoint == null)
+            if ( firstPoint == null )
                 continue;
-            if (checksPath(image, firstPoint, threshold, rect, points)) {
+            if ( checksPath(image, firstPoint, threshold, rect, points) ) {
                 return firstPoint;
             }
+            Log.d(TAG,"findMultiColors-2" );
         }
+        Log.d(TAG,"findMultiColors-3" );
         return null;
     }
 

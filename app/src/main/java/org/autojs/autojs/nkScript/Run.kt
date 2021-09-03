@@ -7,6 +7,7 @@ import android.util.Log
 import com.stardust.app.GlobalAppContext
 import com.stardust.autojs.core.image.ColorFinder
 import com.stardust.autojs.runtime.api.Images
+import org.apache.log4j.lf5.viewer.LogFactor5InputDialog
 import org.autojs.autojs.autojs.AutoJs
 import org.autojs.autojs.nkScript.interImp.*
 import org.opencv.android.OpenCVLoader
@@ -31,7 +32,6 @@ class Run {
     lateinit var colorFinder: ColorFinder
 
 
-
     fun main(){
         //  init()
 
@@ -39,73 +39,46 @@ class Run {
         poolMain = Executors.newFixedThreadPool(1)
         poolSub = Executors.newFixedThreadPool(1)
 
-        AutoJs.initInstance(GlobalAppContext.get() as Application?);
+  /*      AutoJs.initInstance(GlobalAppContext.get() as Application?);
         val autoJs = AutoJs.getInstance()
         val scriptRuntime = autoJs.runTime;
         scriptRuntime.init()
         images = scriptRuntime.images
-//        if ( images.mContext==null )
-//            Log.d(TAG, "main: context="+null )
-//        else
-//            Log.d(TAG, "main: context="+images.mContext.toString() )
+
 
         if (  scriptRuntime.app.currentActivity ==null )
             Log.d(TAG, "main: currentActivity="+null )
         else
             Log.d(TAG, "main: currentActivity="+scriptRuntime.app.currentActivity.toString() )
-
+  */
         //  Log.d(TAG, "main: context ="+ )
-        //images.initOpenCvIfNeeded();
-        poolMain = InterMy.ThreadStart( { jk2() }, 1)
         listExecutorService= ArrayList();
+        imagesImp=ImagesImp(this);
+        images=imagesImp.images;
+        colorFinder=imagesImp.colorFinder;
+
+        poolMain = InterMy.ThreadStart( { jk2() }, 1)
         listExecutorService.add( poolMain );
-
-
-/*
-        var scriptRuntime=AutoJs.getInstance().runTime;
-        scriptRuntime.init()
-       var images:Images= if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Images( GlobalAppContext.get(), scriptRuntime,
-                    ScreenCaptureRequester.ActivityScreenCaptureRequester( OnActivityResultDelegate.Mediator(), GlobalAppContext.getActivity() ) )
-        } else {
-            TODO("VERSION.SDK_INT < LOLLIPOP")
-        }
-
-        images.requestScreenCapture(0);
-        var imageWrapper=images.captureScreen();
-        //images.requestScreenCapture()
-
-        var path:String= Environment.getExternalStorageDirectory().toString()+"/1.png"
-        var templateMatching=images.read( path);
-        Log.d(TAG,path)
-
-        var point= images.findImage( imageWrapper,templateMatching, 0.9F )
-        Log.d(TAG,point.x.toString()+","+point.y)*/
 
     }
 
     fun jk2() {
 
         //imagesImp.waitPermission();
+        //images.requestScreenCapture(0);
+        //imagesImp.waitPermission2();
 
         var i:Int=0;
+        imagesImp.requestWaitPermission();
         while (true) {
-
             ++i;
             Log.d( TAG, "jk2: run")
             var ver="0901b"
             GlobalAppContext.toast("ver="+ver+i )
             Log.d( TAG,"ver="+ver);
             // String colorGroup,String rect,int threshold
-            //imagesImp.ks();
-            testFindPic();
-
-            /*         var point:Point= imagesImp.findMultiColors( "ff7716,42|29|fefefe,87|51|ff7716,208|35|fb8db1,254|59|fb9493","[37,81,868,627]",
-                     0);
-                     if (point!=null){
-                         GlobalAppContext.toast("已找到"+point.toString())
-                     }else
-                         GlobalAppContext.toast("未找到")*/
+     //         testFindPic();
+    testFindColor()
 /*
             try {
                 var ret= node.fnode(setNode.ss设置 );
@@ -132,8 +105,22 @@ class Run {
         }
     }
 
-    fun testFindPic(){
-        // imagesImp.waitPermission2()
+    fun testFindColor(){
+       //requestWaitPermission()
+         //imagesImp.waitPermission2()
+        var test= mapOf<String,String>( "c" to "48|21|d7ccf0,84|196|6200ee,147|418|ffffff")
+        //simagesImp.colorTransformMultiColors("60|305|7a7a7a,95|383|6200ee,375|421|ffffff,873|122|6200ee,597|54|3700b3" )
+         var point=imagesImp.findMultiColors(test);
+   /*       var point = imagesImp.findMultiColors( "7a7a7a,35|78|6200ee,315|116|ffffff,813|-183|6200ee,537|-251|3700b3","[37,81,868,627]",
+                     20);*/
+        Log.d(TAG,"testFindColor")
+            if (point!=null){
+                   GlobalAppContext.toast("已找到"+point.toString())
+            }else
+                 GlobalAppContext.toast("未找到")
+    }
+
+    fun requestWaitPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //images.initOpenCvIfNeeded()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -149,6 +136,11 @@ class Run {
                 }
             }
         }
+    }
+
+    fun testFindPic(){
+        // imagesImp.waitPermission2()
+       // requestWaitPermission()
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -156,7 +148,7 @@ class Run {
             var  path:String= Environment.getExternalStorageDirectory().toString()+"/1.png";
             var imagesTemplates=images.read( path )
             var point= images.findImage( imagesScree,imagesTemplates,0.95f );
-            imagesScree.recycle();
+           imagesScree.recycle();
             imagesTemplates.recycle();
             if (point!=null){
                 GlobalAppContext.toast("找到了"+point )

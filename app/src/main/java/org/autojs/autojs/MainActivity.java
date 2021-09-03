@@ -90,6 +90,8 @@ public class MainActivity extends  AppCompatActivity {
         //GlobalAppContext.set( getApplication() );
         EnvScriptRuntime.getAutoJs();
 
+       // Log.d(TAG, (  Integer.parseInt( "f9f6fe",) );
+
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
         Log.e(TAG, "ARK HOT Running status = " + isARKHotRunning);
         Log.e(TAG, "i am on onCreate classloader:" + MainActivity.class.getClassLoader().toString());
