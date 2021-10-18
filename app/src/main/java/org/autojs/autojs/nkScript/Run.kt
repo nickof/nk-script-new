@@ -32,7 +32,7 @@ class Run {
     lateinit var imagesImp: ImagesImp;
     lateinit var colorFinder: ColorFinder
     lateinit var nod: SetNode
-    
+
 //    lateinit var simpleActionAutomator: SimpleActionAutomator
 
     fun main(){
@@ -86,18 +86,8 @@ class Run {
 
      fun testNode(){
 
-//         var ret=node.waitFalseEx( nod.line2 );
-//         if (ret)
-//             Log.d(TAG, "testNode: waitfalse-true")
-//         else
-//             Log.d(TAG, "testNode: waitfalse-false")
-//         var ret= node.waitTrueEx ( nod.line2 ,nod  ,3000 )
-
-//         if (ret!=null)
-//            Log.d(TAG, "testNode: text"+ret.text )
-//         else
-//       Log.d(TAG, "testNode: not found")
-         node.clickXy( nod.zz主页2 )
+         node.waitGrp( nod.testArrayFix );
+         //node.clickXy( nod.zz主页2 )
          //node.fnode (  nod.switch);
       //  node.clkNodeWaitCorlor( nod.switch,3000,50);
 
@@ -113,7 +103,6 @@ class Run {
         imagesImp.requestWaitPermission();
 
         while (true) {
-
             ++i;
             Log.d( TAG, "jk2: run")
             var ver="0901b"

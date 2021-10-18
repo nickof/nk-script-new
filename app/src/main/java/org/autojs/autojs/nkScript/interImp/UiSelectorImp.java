@@ -11,12 +11,10 @@ import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.automator.UiGlobalSelector;
 import com.stardust.automator.UiObject;
 import com.stardust.automator.UiObjectCollection;
-
 import org.opencv.core.Point;
 
 import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.List;
+import java.net.Socket;
 import java.util.Map;
 
 public class UiSelectorImp {
@@ -37,6 +35,7 @@ public class UiSelectorImp {
     }
 
 
+
     public UiObject clickXy(Map<String,String> nodeCondition ) throws Exception {
         UiObject uiObject=fnode(nodeCondition);
 
@@ -44,8 +43,9 @@ public class UiSelectorImp {
             if ( uiObject!=null ){
 
                 Rect rect= uiObject.bounds();
-                Log.d(TAG, "clickXy: rect.bounds="+uiObject.bounds()+",text="+uiObject.text()  );
-                //Log.d(TAG, "clickXy: rect.bounds="+uiObject.boundsInParent() +",text="+uiObject.text()  );
+                //Log.d(TAG, "clickXy: rect.bounds="+uiObject.bounds()+",text="+uiObject.text()  );
+                //Log.d(TAG, "clickXy: rect.bounds="+uiObject.boundsInParent() +",text="+uiObject.text() );
+
                 rect.set( rect.left+1,rect.top+1,rect.right-1,rect.bottom-1 );
                 Log.d(TAG, "clickXy: rect.right="+rect.right );
                 int x=r_( rect.left,rect.right );
@@ -314,7 +314,6 @@ public class UiSelectorImp {
         if( nodeConditon.containsKey( "idx" ) ) {
             uiObject = uiSelector.findOne ( timeout,Integer.parseInt( nodeConditon.get("idx") ) );
         }else{
-
             uiObject = uiSelector.findOne ( timeout,0);
         }
 
@@ -349,7 +348,51 @@ public class UiSelectorImp {
 
     }
 
+//    public UiObject waitGrpEx( Object object ){
+//
+//    }
 
+    public UiObject waitGrp( Object obj ) throws InterruptedException {
+        return waitGrp( obj,3000,100 );
+    }
+
+    public  UiObject waitGrp(Object obj,long timeout,long diff ) throws InterruptedException {
+
+       // Log.d(TAG, "waitGrp: "+obj.getClass().isArray() );
+      Object[]  obj2=( Object[] )obj;
+      long stTime=System.currentTimeMillis();
+      UiObject uiObject;
+
+      while (true){
+
+          for ( Object objSingle :
+                  obj2) {
+              if (objSingle.getClass().isArray()) {
+                  uiObject = fnode((Map<String, String>[]) objSingle );
+                  if (uiObject != null) {
+                      Log.d(TAG, "waitGrp: true="+getUbjectDes( uiObject ) );
+                      return uiObject;
+                  }
+              }else {
+                  uiObject=fnode( (Map<String,String>) objSingle );
+                  if (uiObject != null) {
+                      Log.d(TAG, "waitGrp: true="+getUbjectDes( uiObject ) );
+                      return uiObject;
+                  }
+              }
+
+          }
+
+          if (System.currentTimeMillis()-stTime>timeout){
+              Log.d(TAG, "waitGrp: -time-out");
+              return null;
+          }
+          Thread.sleep( diff );
+
+      }
+
+
+    }
 
     public UiObject waitTrueEx(  Map<String,String>  nodeConditon ,  Map<String,String> nodeConditon2, long timeout  ) throws Exception {
 
