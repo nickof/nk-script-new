@@ -267,7 +267,7 @@ public class ScriptRuntime {
         //mShellSupplier = builder.mShellSupplier;
        // ui = new UI(context, this);
         this.automator = new SimpleActionAutomator(accessibilityBridge, this);
-        automator.setScreenMetrics(mScreenMetrics);
+       // automator.setScreenMetrics(mScreenMetrics);
         //this.info = accessibilityBridge.getInfoProvider();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

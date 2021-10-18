@@ -86,8 +86,6 @@ android {
 }
 
 
-
-
 repositories {
     flatDir {
         dirs 'libs'
@@ -178,4 +176,5 @@ dependencies {
     implementation project(':automator')
     implementation project(':common')
     implementation project(':autojs')
+
 }

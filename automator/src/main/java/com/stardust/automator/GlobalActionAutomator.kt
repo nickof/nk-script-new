@@ -10,6 +10,8 @@ import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import android.view.ViewConfiguration
+import com.stardust.concurrent.VolatileBox
+import com.stardust.concurrent.VolatileDispose
 
 //import com.stardust.concurrent.VolatileBox
 //import com.stardust.concurrent.VolatileDispose
@@ -105,7 +107,8 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private fun gesturesWithHandler(handler: Handler, description: GestureDescription): Boolean {
-/*        val result = VolatileDispose<Boolean>()
+        Log.d(TAG,"gesturesWithHandler-run")
+        val result = VolatileDispose<Boolean>()
         service.dispatchGesture(description, object : AccessibilityService.GestureResultCallback() {
             override fun onCompleted(gestureDescription: GestureDescription) {
                 result.setAndNotify(true)
@@ -115,13 +118,14 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
                 result.setAndNotify(false)
             }
         }, handler)
-        return result.blockedGet()*/
-        return false;
+        return result.blockedGet()
+       // return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private fun gesturesWithoutHandler(description: GestureDescription): Boolean {
-/*        prepareLooperIfNeeded()
+        Log.d(TAG,"gesturesWithoutHandler-run")
+        prepareLooperIfNeeded()
         val result = VolatileBox(false)
         val handler = Handler(Looper.myLooper())
         service.dispatchGesture(description, object : AccessibilityService.GestureResultCallback() {
@@ -136,8 +140,8 @@ class GlobalActionAutomator(private val mHandler: Handler?, private val serviceP
             }
         }, handler)
         Looper.loop()
-        return result.get()*/
-        return false;
+        return result.get()
+        //return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

@@ -1,9 +1,11 @@
 package org.autojs.autojs.nkScript.interImp;
 
 import android.app.Application;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Environment;
 
+import com.nk.nkscript.tinker.util.Utils;
 import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.accessibility.SimpleActionAutomator;
 import com.stardust.autojs.runtime.ScriptRuntime;
@@ -21,6 +23,10 @@ public class SimpleActionAutomatorImp {
     public SimpleActionAutomatorImp( ) {
         scriptRuntime=EnvScriptRuntime.getScriptRuntime();
         simpleActionAutomator=scriptRuntime.automator;
+    }
+
+    public void clickRect(Rect rect){
+        
     }
 
     public  boolean click(int x,int y){

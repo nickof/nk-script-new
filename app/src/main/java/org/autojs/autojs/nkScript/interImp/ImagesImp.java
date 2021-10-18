@@ -10,6 +10,7 @@ import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.autojs.runtime.api.Images;
 import com.stardust.util.ScreenMetrics;
 
+import org.autojs.autojs.MainActivity;
 import org.autojs.autojs.nkScript.Run;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -18,6 +19,9 @@ import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Pattern;
+
+import kotlin.jvm.Synchronized;
+import kotlin.jvm.Throws;
 
 public class ImagesImp {
 
@@ -32,7 +36,7 @@ public class ImagesImp {
     public Run run;
     public final ScreenMetrics mScreenMetrics;
 
-    public ImagesImp(Run run) throws InterruptedException {
+    public ImagesImp()  {
         scriptRuntime= EnvScriptRuntime.getScriptRuntime();
         images = scriptRuntime.getImages();
         mScreenMetrics = scriptRuntime.getScreenMetrics();
@@ -40,19 +44,22 @@ public class ImagesImp {
         +","+ mScreenMetrics.mDesignHeight);
         //screenMetrics.setScreenMetrics(1080,1920);
         colorFinder =new ColorFinder(mScreenMetrics);
-
         Log.d(TAG, "ImagesImp: cons-finish");
-        this.run=run;
-       // requestWaitPermission();
+        //this.run=run;
+
     }
 
 
-    public void requestWaitPermission() throws InterruptedException {
+    public void requestWaitPermission() throws Exception {
             long stTime = System.currentTimeMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 //images.initOpenCvIfNeeded()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    images.requestScreenCapture(3);
+
+                    if (images.getmScreenCapturer()==null ) {
+                        Log.d(TAG, "requestWaitPermission: request permission");
+                        images.requestScreenCapture(3);
+                    }
                     while (images.getmScreenCapturer() == null) {
                         Log.d(TAG, "wait-permisson");
                         try {
@@ -62,7 +69,7 @@ public class ImagesImp {
                             }
                         } catch (InterruptedException e) {
                             Log.d(TAG, "interrupted");
-                            return;
+                            throw new Exception("wait-permisson-interrupted");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -72,12 +79,40 @@ public class ImagesImp {
                 images.initOpenCvIfNeeded();
         }
 
+
+    public void waitPermissionOnlyWait() throws Exception {
+
+        long stTime = System.currentTimeMillis();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //images.initOpenCvIfNeeded()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                //images.requestScreenCapture(3);
+                while (images.getmScreenCapturer() == null) {
+                    Log.d(TAG, "wait-permisson-only-wait");
+                    try {
+                        Thread.sleep(1000);
+                        if (System.currentTimeMillis()-stTime>1000*30){
+                            throw new Exception("wait-permission-outtime");
+                        }
+                    } catch (InterruptedException e) {
+                        Log.d(TAG, "interrupted");
+                        throw new Exception("wait-permisson-interrupted");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        images.initOpenCvIfNeeded();
+
+    }
+
     public void waitPermission2() throws InterruptedException {
         Log.d(TAG, "waitPermission2: run");
         if (images.getmScreenCapturer()==null){
             while (this.images.getmScreenCapturer()==null ){
-                GlobalAppContext.toast("wait-permisson");
-                Log.d(TAG,"wait-permisson");
+                GlobalAppContext.toast("wait-permisson2");
+                Log.d(TAG,"wait-permisson2");
                 Thread.sleep(1000);
             }
         }
@@ -104,7 +139,7 @@ public class ImagesImp {
             sty=Integer.parseInt(colorArrSub[1]);
             for (int i=1;i<colorArr.length;i++){
                 stringBuilder.append(",");
-                Log.d(TAG, "colorTransformMultiColors: "+colorArr[i] );
+                //Log.d(TAG, "colorTransformMultiColors: "+colorArr[i] );
                 colorArrSub=colorArr[i].split( Pattern.quote("|") );
                 distanceX= (Integer.parseInt(colorArrSub[0])-stx)+"";
                 distanceY=(Integer.parseInt(colorArrSub[1])-sty)+"";
@@ -119,9 +154,12 @@ public class ImagesImp {
     }
 
     //[28,83,940,905]
+    //mapOf<String,String>( "c" to "48|21|d7ccf0,84|196|6200ee,
+    // 147|418|ffffff","s" to "0.9","r" to "[68,266,1057,794]")
     public Point findMultiColors(  Map<String,String> map) throws InterruptedException {
         String rect;
         int threshold=0;
+
         if ( map.containsKey("r") ){
             rect=map.get("r");
         }else
@@ -130,57 +168,86 @@ public class ImagesImp {
         if (map.containsKey("s"))
             threshold= Integer.parseInt(map.get("s") );
 
-        String colorGroup=colorTransformMultiColors( map.get("c") );
-
-        return findMultiColors( colorGroup,rect,threshold );
+       // String colorGroup=colorTransformMultiColors( map.get("c") );
+        String colorGroup= map.get("c");
+        Point p=null;
+         synchronized ( this ){
+            p= findMultiColors( colorGroup,rect,threshold );
+        }
+        return  p;
     }
-
 
     //
     public Point findMultiColors(String colorGroup,String rect,int threshold ) throws InterruptedException {
-        waitPermission2();
-        Log.d(TAG,"findMultiColors-run" );
+
+        //waitPermission2();
+        //Log.d(TAG,"findMultiColors-run" );
         getImageWrapperMain();
+        colorGroup=colorTransformMultiColors( colorGroup );
         //Log.d(TAG, "findMultiColors: imageWrapperMain="+imageWrapperMain );
         String[] colorArr=colorGroup.split(",");
         String[] colorArrSub;
-        int firstColor=Integer.parseInt(colorArr[0],16);
+        Log.d(TAG, "findMultiColors: colorGroup="+colorGroup);
+
+        int firstColor=Integer.parseInt( colorArr[0],16 );
         int[] points = null;
         int jCurIdx=0;
 
         if (colorArr.length>1){
+
             points =new int[ (colorArr.length-1)*3 ];
             for (int i=1;i<colorArr.length;i++){
+
                 colorArrSub=colorArr[i].split(Pattern.quote("|"));
                 points[jCurIdx]=Integer.parseInt(colorArrSub[0]);
                 points[jCurIdx+1]=Integer.parseInt(colorArrSub[1]);
                 points[jCurIdx+2]=Integer.parseInt(colorArrSub[2],16);
+
                 Log.d(TAG, "findMultiColors: "+points[jCurIdx]
-                        +","+ points[jCurIdx+1]+","+points[jCurIdx+2] );
+                        +","+ points[jCurIdx+1]+","+points[jCurIdx+2]
+                        +",thread="+Thread.currentThread().getName()  );
                 jCurIdx+=3;
+
+
+
             }
         }
 
+        Log.d(TAG, "findMultiColors: rect="+rect.toString() );
         //  Log.d(TAG, "findMultiColors: "+ points.toString() );
         String[] rectArr=rect.split(",");
         rectArr[0]= rectArr[0].replace("[","");
         rectArr[3]=rectArr[3].replace("]","");
-       // Log.d(TAG, "findMultiColors: rect="+rectArr.toString() );
+        Log.d(TAG, "findMultiColors: rect="+rectArr.toString() );
 
-        Rect rect1=new Rect( Integer.parseInt(rectArr[0]),Integer.parseInt(rectArr[1]),
-                Integer.parseInt(rectArr[2]),Integer.parseInt(rectArr[3]));
+        int x,y,x2,y2;
+        x=Integer.parseInt( rectArr[0] );
+        y=Integer.parseInt( rectArr[1] );
+        x2=Integer.parseInt( rectArr[2] );
+        y2=Integer.parseInt( rectArr[3] );
+
+        x2=x2-x;
+        y2=y2-y;
+
+        Rect rect1=new Rect( x,y,x2,y2 );
+        Log.d(TAG, "findMultiColors: rect="+rect1  );
+
+//        Rect rect1=new Rect( Integer.parseInt(rectArr[0]),Integer.parseInt(rectArr[1]),
+//                Integer.parseInt( rectArr[2]),Integer.parseInt(rectArr[3]) );
+
         //Log.d(TAG,"rect="+rect1.toString() );
         //images.initOpenCvIfNeeded();
+
         for (int i=0;i<points.length;i++){
             Log.d(TAG, "findMultiColors: point,i,v="+i+","+points[i] );
         }
+
         Log.d(TAG, "findMultiColors:"
         +"\nimageWrapperMain"+imageWrapperMain.toString()
         +"\nfirstColor="+firstColor
         +"\nthreshold="+threshold
         +"\nrect="+rect1);
         Point point= colorFinder.findMultiColors( imageWrapperMain,firstColor,threshold, rect1,points );
-
         return point;
 
     }

@@ -82,6 +82,7 @@ class UiObjectCollection private constructor(private val mNodes: List<UiObject?>
             arg.putIn(bundle)
         }
         return bundle
+
     }
 
     fun click(): Boolean {

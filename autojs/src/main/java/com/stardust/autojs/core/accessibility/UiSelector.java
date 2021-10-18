@@ -61,9 +61,7 @@ import static androidx.core.view.accessibility.AccessibilityNodeInfoCompat.Acces
 
 public class UiSelector extends UiGlobalSelector {
 
-
     private static final String TAG = "UiSelector";
-
     private AccessibilityBridge mAccessibilityBridge;
     private AccessibilityNodeInfoAllocator mAllocator = null;
 
@@ -78,13 +76,15 @@ public class UiSelector extends UiGlobalSelector {
 
     protected UiObjectCollection find(int max) {
         ensureAccessibilityServiceEnabled();
+
         if ((mAccessibilityBridge.getFlags() & AccessibilityBridge.FLAG_FIND_ON_UI_THREAD) != 0
                 && Looper.myLooper() != Looper.getMainLooper()) {
             VolatileBox<UiObjectCollection> result = new VolatileBox<>();
-            mAccessibilityBridge.post(() -> result.setAndNotify(findImpl(max)));
+            mAccessibilityBridge.post( () -> result.setAndNotify( findImpl(max) ) );
             return result.blockedGet();
         }
-        return findImpl(max);
+        return findImpl( max );
+
     }
 
     @NonNull
@@ -104,6 +104,7 @@ public class UiSelector extends UiGlobalSelector {
             return UiObjectCollection.Companion.getEMPTY();
         }
         List<UiObject> result = new ArrayList<>();
+
         for (AccessibilityNodeInfo root : roots) {
             if (root == null) {
                 continue;
@@ -117,13 +118,13 @@ public class UiSelector extends UiGlobalSelector {
                 break;
             }
         }
-        return UiObjectCollection.Companion.of(result);
+        return UiObjectCollection.Companion.of( result );
 
     }
 
     @Override
     public UiGlobalSelector textMatches(@NotNull String regex) {
-        return super.textMatches(convertRegex(regex));
+        return super.textMatches( convertRegex(regex) );
     }
 
     // TODO: 2018/1/30 更好的实现方式。
@@ -204,6 +205,32 @@ public class UiSelector extends UiGlobalSelector {
             uiObjectCollection = find(1);
         }
         return uiObjectCollection.get(0);
+    }
+
+    @ScriptInterface
+    public UiObject findOne(long timeout,int idx ) {
+
+        UiObjectCollection uiObjectCollection = find(1);
+        long start = SystemClock.uptimeMillis();
+
+        while (uiObjectCollection.empty()) {
+            Log.d(TAG, "findOne: wait");
+            if (Thread.currentThread().isInterrupted()) {
+                throw new ScriptInterruptedException();
+            }
+            if (timeout > 0 && SystemClock.uptimeMillis() - start > timeout) {
+                return null;
+            }
+            try {
+                Thread.sleep(50 );
+            } catch ( InterruptedException e ) {
+                throw new ScriptInterruptedException();
+            }
+            uiObjectCollection = find(1);
+
+        }
+        return uiObjectCollection.get(idx);
+
     }
 
     public UiObject findOnce() {

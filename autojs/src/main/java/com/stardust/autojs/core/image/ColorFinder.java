@@ -117,22 +117,28 @@ public class ColorFinder {
     }
 
     public Point findMultiColors(ImageWrapper image, int firstColor, int threshold, Rect rect, int[] points) {
+
         Point[] firstPoints = findAllPointsForColor(image, firstColor, threshold, rect);
         Log.d(TAG,"findMultiColors-1" );
         for (Point firstPoint : firstPoints) {
             if ( firstPoint == null )
                 continue;
             if ( checksPath(image, firstPoint, threshold, rect, points) ) {
+                Log.d(TAG, "findMultiColors: true="+firstPoint.toString() );
                 return firstPoint;
             }
-            Log.d(TAG,"findMultiColors-2" );
+            //Log.d(TAG,"findMultiColors-2" );
         }
+
         Log.d(TAG,"findMultiColors-3" );
         return null;
+
     }
 
     private boolean checksPath(ImageWrapper image, Point startingPoint, int threshold, Rect rect, int[] points) {
+
         for (int i = 0; i < points.length; i += 3) {
+
             int x = points[i];
             int y = points[i + 1];
             int color = points[i + 2];
@@ -151,4 +157,6 @@ public class ColorFinder {
         }
         return true;
     }
+
+
 }

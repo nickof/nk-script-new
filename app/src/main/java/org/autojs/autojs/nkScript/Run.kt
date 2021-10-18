@@ -1,20 +1,21 @@
 package org.autojs.autojs.nkScript
 
-import android.app.Application
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import android.webkit.WebView
 import com.stardust.app.GlobalAppContext
+import com.stardust.autojs.core.accessibility.SimpleActionAutomator
 import com.stardust.autojs.core.image.ColorFinder
+import com.stardust.autojs.runtime.ScriptRuntime
 import com.stardust.autojs.runtime.api.Images
-import org.apache.log4j.lf5.viewer.LogFactor5InputDialog
-import org.autojs.autojs.autojs.AutoJs
 import org.autojs.autojs.nkScript.interImp.*
-import org.opencv.android.OpenCVLoader
-import org.opencv.core.Point
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.log
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 
 class Run {
 
@@ -30,37 +31,77 @@ class Run {
     lateinit var images: Images;
     lateinit var imagesImp: ImagesImp;
     lateinit var colorFinder: ColorFinder
-
+    lateinit var nod: SetNode
+    
+//    lateinit var simpleActionAutomator: SimpleActionAutomator
 
     fun main(){
-        //  init()
+        api_init();
+    }
 
-        // threadInterrruptedForce();
+    fun api_init(){
+
         poolMain = Executors.newFixedThreadPool(1)
         poolSub = Executors.newFixedThreadPool(1)
 
-  /*      AutoJs.initInstance(GlobalAppContext.get() as Application?);
-        val autoJs = AutoJs.getInstance()
-        val scriptRuntime = autoJs.runTime;
-        scriptRuntime.init()
-        images = scriptRuntime.images
-
-
-        if (  scriptRuntime.app.currentActivity ==null )
-            Log.d(TAG, "main: currentActivity="+null )
-        else
-            Log.d(TAG, "main: currentActivity="+scriptRuntime.app.currentActivity.toString() )
-  */
-        //  Log.d(TAG, "main: context ="+ )
         listExecutorService= ArrayList();
-        imagesImp=ImagesImp(this);
+        imagesImp=ImagesImp();
         images=imagesImp.images;
         colorFinder=imagesImp.colorFinder;
 
+        nod= SetNode()
+        node= UiSelectorImp( imagesImp );
         poolMain = InterMy.ThreadStart( { jk2() }, 1)
+        //poolSub = InterMy.ThreadStart( { scriptRun() }, 1)
+       // listExecutorService.add( poolSub );
         listExecutorService.add( poolMain );
 
     }
+
+    fun scriptRun(){
+
+        var i:Int=0;
+        //imagesImp2. requestWaitPermission ();
+        imagesImp.waitPermissionOnlyWait ();
+
+        while (true) {
+
+            ++i;
+            Log.d( TAG, "scriptRun: run")
+            var ver="0901b"
+            GlobalAppContext.toast("ver="+ver+i )
+            Log.d( TAG,"ver="+ver);
+            testNode()
+            Log.d(TAG,"script-run-loop"+i )
+
+            try {
+                Thread.sleep(1000)
+            } catch (e: Exception) {
+                throw java.lang.Exception("scriptRun-"+e.toString() ) ;
+            }
+
+        }
+    }
+
+
+     fun testNode(){
+
+//         var ret=node.waitFalseEx( nod.line2 );
+//         if (ret)
+//             Log.d(TAG, "testNode: waitfalse-true")
+//         else
+//             Log.d(TAG, "testNode: waitfalse-false")
+//         var ret= node.waitTrueEx ( nod.line2 ,nod  ,3000 )
+
+//         if (ret!=null)
+//            Log.d(TAG, "testNode: text"+ret.text )
+//         else
+//       Log.d(TAG, "testNode: not found")
+         node.clickXy( nod.zz主页2 )
+         //node.fnode (  nod.switch);
+      //  node.clkNodeWaitCorlor( nod.switch,3000,50);
+
+     }
 
     fun jk2() {
 
@@ -70,15 +111,17 @@ class Run {
 
         var i:Int=0;
         imagesImp.requestWaitPermission();
+
         while (true) {
+
             ++i;
             Log.d( TAG, "jk2: run")
             var ver="0901b"
             GlobalAppContext.toast("ver="+ver+i )
             Log.d( TAG,"ver="+ver);
-            // String colorGroup,String rect,int threshold
-     //         testFindPic();
-    testFindColor()
+            testNode()
+            //testFindColor()
+
 /*
             try {
                 var ret= node.fnode(setNode.ss设置 );
@@ -90,12 +133,12 @@ class Run {
 
                 Log.d(TAG,ver)
                         Thread.sleep(1000)
-
             } catch (e: InterruptedException) {
                 Log.d(TAG, "jk2: InterruptedException")
                 e.printStackTrace()
                 break
             }*/
+
             try {
                 Thread.sleep(1000)
             } catch (e: Exception) {
@@ -106,19 +149,23 @@ class Run {
     }
 
     fun testFindColor(){
-       //requestWaitPermission()
-         //imagesImp.waitPermission2()
+
+        //requestWaitPermission()
+        // imagesImp.waitPermission2()
         var test= mapOf<String,String>( "c" to "48|21|d7ccf0,84|196|6200ee,147|418|ffffff")
-        //simagesImp.colorTransformMultiColors("60|305|7a7a7a,95|383|6200ee,375|421|ffffff,873|122|6200ee,597|54|3700b3" )
-         var point=imagesImp.findMultiColors(test);
+        var point=imagesImp.findMultiColors(test);
    /*       var point = imagesImp.findMultiColors( "7a7a7a,35|78|6200ee,315|116|ffffff,813|-183|6200ee,537|-251|3700b3","[37,81,868,627]",
                      20);*/
-        Log.d(TAG,"testFindColor")
+
+        Log.d(TAG,"testFindColor-thread="+Thread.currentThread().name )
             if (point!=null){
-                   GlobalAppContext.toast("已找到"+point.toString())
+                GlobalAppContext.toast("已找到"+point.toString()+"thr-name="+Thread.currentThread().name )
+                Log.d(TAG, "已找到"+point.toString()+"thr-name="+Thread.currentThread().name  )
             }else
-                 GlobalAppContext.toast("未找到")
+                 GlobalAppContext.toast("未找到，"+"thr-name="+Thread.currentThread().name  )
+
     }
+
 
     fun requestWaitPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -141,15 +188,15 @@ class Run {
     fun testFindPic(){
         // imagesImp.waitPermission2()
        // requestWaitPermission()
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             var imagesScree=  images.captureScreen()
             var  path:String= Environment.getExternalStorageDirectory().toString()+"/1.png";
             var imagesTemplates=images.read( path )
             var point= images.findImage( imagesScree,imagesTemplates,0.95f );
-           imagesScree.recycle();
+
+            imagesScree.recycle();
             imagesTemplates.recycle();
+
             if (point!=null){
                 GlobalAppContext.toast("找到了"+point )
                 Log.d(TAG,"找到了"+point)
@@ -172,7 +219,8 @@ class Run {
         else
             Log.d(TAG,"application not null")
         clk = SimpleActionAutomatorImp()
-        node = UiSelectorImp()
+        node = UiSelectorImp(imagesImp)
+
 //        imagesImp=ImagesImp();
 //        colorFinder=imagesImp.colorFinder;
 //        images=imagesImp.images ;

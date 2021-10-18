@@ -82,7 +82,7 @@ public class ScriptRunMain {
 //        scriptRuntime.init();
 //        uiSelector=new UiSelector( scriptRuntime.accessibilityBridge );
         clk= new SimpleActionAutomatorImp();
-        node=new UiSelectorImp();
+        //node=new UiSelectorImp();
 
     }
 
