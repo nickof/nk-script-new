@@ -1,6 +1,7 @@
 package org.autojs.autojs.nkScript.interImp;
 
 import android.app.Application;
+import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -9,13 +10,13 @@ import android.view.KeyEvent;
 import com.stardust.app.GlobalAppContext;
 import com.stardust.util.ClipboardUtil;
 
-import org.autojs.autojs.nkScript.ScriptService;
+import org.autojs.autojs.nkScript.Service.ScriptService;
 import org.autojs.autojs.nkScript.functionInterface.FunInterThreadMethod;
+import org.autojs.autojs.nkScript.model.ShareDataScript;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 
 public class InterMy {
 
@@ -28,28 +29,40 @@ public class InterMy {
 
             Log.i(TAG, "onKeyEvent");
             int key = event.getKeyCode();
-        Log.d(TAG, "volEventDo: "+event.toString() );
+             Log.d(TAG, "volEventDo: "+event.toString() );
+            Application application;
+            Intent intent;
             switch(key){
-                case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    Log.i(TAG, "KEYCODE_VOLUME_DOWN");
-                    Application application= (Application) GlobalAppContext.get();
-                    Intent intent=new Intent( application, ScriptService.class );
-                    application.stopService (intent);
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_UP:
-                    Log.i(TAG, "KEYCODE_VOLUME_UP");
-                    application= (Application) GlobalAppContext.get();
-                    if (application==null)
-                        Log.d(TAG, "volEventDo: application is null");
-                   //intent=new Intent( application, ScriptService.class );
-                    intent=new Intent( application, ScriptService.class );
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        application.startForegroundService(intent);
-                    } else {
-                        application.startService(intent);
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+          /*          Application application= (Application) GlobalAppContext.get();
+                    ThreadpoolScriptManager.shutDownAll();*/
+                    synchronized ( ShareDataScript.ScriptServiceLock ){
+                        Log.i(TAG, "KEYCODE_VOLUME_DOWN");
+                         application= (Application) GlobalAppContext.get();
+                         intent=new Intent( application, ScriptService.class );
+                        application.stopService (intent);
+                        break;
                     }
-                    break;
+                case KeyEvent.KEYCODE_VOLUME_UP:
+             /*       application= (Application) GlobalAppContext.get();
+                    Log.i(TAG, "KEYCODE_VOLUME_UP");
+                    ThreadpoolScriptManager.shutDownAll();
+                    new Run().main();*/
+                    synchronized ( ShareDataScript.ScriptServiceLock){
+                        application= (Application) GlobalAppContext.get();
+                        if (application==null)
+                            Log.d(TAG, "volEventDo: application is null");
+                        //intent=new Intent( application, ScriptService.class );
+                        intent=new Intent( application, ScriptService.class );
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            application.startForegroundService(intent);
+                        } else {
+                            application.startService(intent);
+                        }
+                        break;
+                    }
+
             }
 //————————————————
 //        版权声明：本文为CSDN博主「法迪」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
@@ -127,6 +140,33 @@ public class InterMy {
         }
         return executorService;
     }
+
+
+    public void stopScriptService( Class clazz ){
+        synchronized (ShareDataScript.ScriptServiceLock){
+            Application application= (Application) GlobalAppContext.get();
+            if (application==null){
+                Log.d(TAG, "onMessage: application is null");
+            }
+            application.stopService( new Intent( application, ScriptService.class ));
+        }
+    }
+
+    public void startScriptService( Class clazz  ){
+        synchronized (ShareDataScript.ScriptServiceLock){
+            Application application= (Application) GlobalAppContext.get();
+            if (application==null)
+                Log.d(TAG, "onMessage: application is null");
+            //intent=new Intent( application, ScriptService.class );
+            Intent intent=new Intent( application, clazz );
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                application.startForegroundService(intent);
+            } else {
+                application.startService(intent);
+            }
+        }
+    }
+
 
 }
 

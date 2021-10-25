@@ -61,14 +61,15 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/cleanPatch"
         android:text="kill self"/>
+
     <Button
         android:id="@+id/showInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/killSelf"
-        android:text="show info"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:text="show info" />
 
     <Button
         android:id="@+id/open_accessibility"
@@ -77,6 +78,66 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/showInfo"
-        android:text="show info"/>
+        android:text="开无障碍"/>
+
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/open_accessibility"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/bt_connection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/showInfo"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:text="连接" />
+
+
+        <Button
+            android:id="@+id/bt_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="发送">
+
+        </Button>
+
+        <EditText
+            android:id="@+id/et_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="发送内容"></EditText>
+
+        <EditText
+            android:id="@+id/edit_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:hint="服务器地址" />
+
+        <TextView
+            android:id="@+id/tv_connectionLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:text="连接日志" />
+
+        <TextView
+            android:id="@+id/tv_receiveLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:text="收日志" />
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>

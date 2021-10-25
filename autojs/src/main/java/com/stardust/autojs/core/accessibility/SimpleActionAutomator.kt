@@ -233,7 +233,7 @@ class SimpleActionAutomator(private val mAccessibilityBridge: AccessibilityBridg
     @ScriptInterface
     fun paste(target: ActionTarget): Boolean {
         ScriptRuntime.requiresApi(18)
-        return performAction(target.createAction(AccessibilityNodeInfo.ACTION_PASTE))
+        return performAction(target.createAction( AccessibilityNodeInfo.ACTION_PASTE ))
     }
 
     private fun ensureAccessibilityServiceEnabled() {

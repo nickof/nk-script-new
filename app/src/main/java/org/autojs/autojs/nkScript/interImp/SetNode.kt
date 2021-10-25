@@ -17,7 +17,12 @@ package org.autojs.autojs.nkScript.interImp
     var zz主页= mapOf<String,String>( "text" to "主页" )
     var zz主页2= arrayOf( mapOf<String,String>( "text" to "主页" ) , mapOf<String,String>( "desc" to "主页" )  )
     var switch= mapOf<String,String>( "text" to "关闭","c" to "935|697|00acbb,946|726|00acbb","idx" to "0" );
-     var testArrayFix= arrayOf( mapOf<String,String>( "text" to "West Wingy" ), zz主页2 ) ;
+    var lineListView= mapOf<String,String>( "id" to "jp.naver.line.android:id/chat_list_recycler_view" );
+    var andDesk= mapOf<String,String>( "class" to "android.view.ViewGroup" );
+
+     var testArrayFix= arrayOf( mapOf<String,String>( "text" to "West Wingy" ), zz主页2 );
+     var baidu= arrayOf( mapOf<String,String>( "class" to "androidx.recyclerview.widget.RecyclerView" ) );
+
 
 
 }

@@ -47,7 +47,6 @@ public class AppUtils {
         } catch (Exception e) {
             return false;
         }
-
     }
 
     @ScriptInterface
@@ -137,4 +136,5 @@ public class AppUtils {
         mCurrentActivity = new WeakReference<>(currentActivity);
         Log.d("App", "setCurrentActivity: " + currentActivity);
     }
+
 }

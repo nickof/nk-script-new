@@ -207,9 +207,6 @@ public class ImagesImp {
                         +","+ points[jCurIdx+1]+","+points[jCurIdx+2]
                         +",thread="+Thread.currentThread().getName()  );
                 jCurIdx+=3;
-
-
-
             }
         }
 
@@ -234,7 +231,6 @@ public class ImagesImp {
 
 //        Rect rect1=new Rect( Integer.parseInt(rectArr[0]),Integer.parseInt(rectArr[1]),
 //                Integer.parseInt( rectArr[2]),Integer.parseInt(rectArr[3]) );
-
         //Log.d(TAG,"rect="+rect1.toString() );
         //images.initOpenCvIfNeeded();
 

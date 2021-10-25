@@ -3,35 +3,48 @@ package org.autojs.autojs.nkScript
 import android.os.Build
 import android.os.Environment
 import android.util.Log
-import android.webkit.WebView
 import com.stardust.app.GlobalAppContext
-import com.stardust.autojs.core.accessibility.SimpleActionAutomator
 import com.stardust.autojs.core.image.ColorFinder
-import com.stardust.autojs.runtime.ScriptRuntime
 import com.stardust.autojs.runtime.api.Images
+import com.stardust.autojs.runtime.app.AppUtils
 import org.autojs.autojs.nkScript.interImp.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.log
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 
-class Run {
+open class Run {
+
+    var scriptName="test"
 
     lateinit var listExecutorService: ArrayList<ExecutorService>;
     lateinit var poolMain: ExecutorService
     lateinit var poolSub: ExecutorService
-    var TAG:String="Run"
+    open var TAG:String="nkScript-Run"
     var setNode=SetNode();
     //var listExecutorService = arrayListOf<ExecutorService>();
 
     var clk: SimpleActionAutomatorImp? = null
+
     lateinit var node: UiSelectorImp;
     lateinit var images: Images;
     lateinit var imagesImp: ImagesImp;
     lateinit var colorFinder: ColorFinder
     lateinit var nod: SetNode
+    lateinit var appUtils: AppUtilsImp;
+
+    constructor() {
+
+        //this.scriptName = scriptName
+        imagesImp=ImagesImp()
+        images=imagesImp.images
+        colorFinder=imagesImp.colorFinder
+
+        nod= SetNode()
+        node= UiSelectorImp( imagesImp )
+
+        appUtils = AppUtilsImp( node.scriptRuntime.app);
+        // node.scriptRuntime.app
+
+    }
 
 //    lateinit var simpleActionAutomator: SimpleActionAutomator
 
@@ -41,20 +54,30 @@ class Run {
 
     fun api_init(){
 
+        //新建线程池
         poolMain = Executors.newFixedThreadPool(1)
         poolSub = Executors.newFixedThreadPool(1)
-
         listExecutorService= ArrayList();
-        imagesImp=ImagesImp();
-        images=imagesImp.images;
-        colorFinder=imagesImp.colorFinder;
 
-        nod= SetNode()
-        node= UiSelectorImp( imagesImp );
-        poolMain = InterMy.ThreadStart( { jk2() }, 1)
-        //poolSub = InterMy.ThreadStart( { scriptRun() }, 1)
-       // listExecutorService.add( poolSub );
-        listExecutorService.add( poolMain );
+        //poolMain = InterMy.ThreadStart( { jk2() }, 1 )
+       // val clazz = Class.forName("org.autojs.autojs.nkScript.scriptConllection.test.class")
+
+        try {
+           var clazz =  Class.forName("org.autojs.autojs.nkScript.scriptCollection."+scriptName  )
+           var method=clazz.getDeclaredMethod("script");
+           var obj=clazz.newInstance()
+            //Log.d(TAG, clazz.simpleName+"-className" );
+           //{ method }
+            poolSub = InterMy.ThreadStart(  { method.invoke(obj); } , 1 )
+            listExecutorService.add( poolSub );
+            listExecutorService.add( poolMain );
+            ThreadpoolScriptManager.setListExecutorServices( listExecutorService );
+
+         } catch (e: Exception) {
+                GlobalAppContext.toast( "脚本"+scriptName+"未找到,请确认名称"  );
+            return;
+        }
+
 
     }
 
@@ -62,10 +85,9 @@ class Run {
 
         var i:Int=0;
         //imagesImp2. requestWaitPermission ();
+        GlobalAppContext.toast("script-run.")
         imagesImp.waitPermissionOnlyWait ();
-
         while (true) {
-
             ++i;
             Log.d( TAG, "scriptRun: run")
             var ver="0901b"
@@ -79,37 +101,36 @@ class Run {
             } catch (e: Exception) {
                 throw java.lang.Exception("scriptRun-"+e.toString() ) ;
             }
-
         }
     }
 
 
      fun testNode(){
-
-         node.waitGrp( nod.testArrayFix );
-         //node.clickXy( nod.zz主页2 )
+         //node.waitGrp( nod.testArrayFix );
+         node.clickXy( nod.zz主页2 )
          //node.fnode (  nod.switch);
-      //  node.clkNodeWaitCorlor( nod.switch,3000,50);
-
+         //node.clkNodeWaitCorlor( nod.switch,3000,50);
      }
+
+    fun toast( string: String){
+        GlobalAppContext.toast(string)
+    }
 
     fun jk2() {
 
         //imagesImp.waitPermission();
         //images.requestScreenCapture(0);
         //imagesImp.waitPermission2();
-
         var i:Int=0;
         imagesImp.requestWaitPermission();
 
         while (true) {
+
             ++i;
             Log.d( TAG, "jk2: run")
             var ver="0901b"
-            GlobalAppContext.toast("ver="+ver+i )
+            GlobalAppContext.toast( "ver="+ver+i+","+Thread.currentThread().name )
             Log.d( TAG,"ver="+ver);
-            testNode()
-            //testFindColor()
 
 /*
             try {
@@ -216,5 +237,6 @@ class Run {
 //        images.initOpenCvIfNeeded();
 
     }
+
 
 }

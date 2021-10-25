@@ -25,7 +25,7 @@ dependencies {
 //    api ("androidx.appcompat:appcompat:1.3.0") {
 //        exclude group: 'androidx.arch.core', module: 'core-runtime'
 //    }
-
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation("com.tencent.tinker:tinker-android-loader:${TINKER_VERSION}") { changing = true }
     annotationProcessor("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
     compileOnly("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}") { changing = true }
@@ -469,6 +469,7 @@ if (buildWithTinker()) {
             }
         }
     }
+
     project.afterEvaluate {
         //sample use for build all flavor for one time
         if (hasFlavors) {

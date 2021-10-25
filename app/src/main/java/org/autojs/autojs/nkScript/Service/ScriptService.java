@@ -1,6 +1,5 @@
-package org.autojs.autojs.nkScript;
+package org.autojs.autojs.nkScript.Service;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,21 +11,16 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 
-import com.stardust.app.GlobalAppContext;
-import com.stardust.util.UiHandler;
-
 import org.autojs.autojs.R;
-import org.autojs.autojs.nkScript.interImp.InterMy;
-
-import java.util.concurrent.ExecutorService;
+import org.autojs.autojs.nkScript.Run;
+import org.autojs.autojs.nkScript.ThreadpoolScriptManager;
 
 
 public class ScriptService extends Service {
 
-    private static final String TAG = "ScriptService";
+    private static final String TAG = "nkScript-ScriptService";
     public static final String CHANNEL_ID_STRING = "service_01";
     private Notification notification;
-    ScriptRunMain scriptRunMain;
     Run run;
 
     @Nullable
@@ -40,8 +34,8 @@ public class ScriptService extends Service {
 
         Log.d(TAG, "onCreate: run++");
         super.onCreate();
-  //      Context appCotext=GlobalAppContext.get();
-         //GlobalAppContext.set((Application) getApplicationContext());
+        ThreadpoolScriptManager.shutDownAll();
+
         NotificationManager notificationManager = (NotificationManager)this.
                 getSystemService( getApplicationContext().NOTIFICATION_SERVICE );
         NotificationChannel mChannel = null;
@@ -55,9 +49,11 @@ public class ScriptService extends Service {
             Log.d(TAG, "onCreate: startForeground");
             startForeground(1, notification );
        }
+
         //startForeground(1, notification );
 //        scriptRunMain=   new ScriptRunMain();
 //        scriptRunMain.main();
+
         run=new Run();
         run.main();
 
@@ -77,12 +73,12 @@ public class ScriptService extends Service {
         Log.d(TAG, "onDestroy: ");
         if ( run.listExecutorService!=null ){
             Log.d(TAG, "onDestroy: stopThread");
-            for ( ExecutorService ser: run.listExecutorService ) {
-                Log.d(TAG, "onDestroy: stopSub");
-                InterMy.threadInterruptedForce( ser )  ;
-               // new UiHandler( this.getApplicationContext() ).toast("线程停止成功");
-            }
-            new UiHandler( this.getApplicationContext() ).toast("全部线程停止成功");
+//            for ( ExecutorService ser: run.listExecutorService ) {
+//                Log.d(TAG, "onDestroy: stopSub");
+//                InterMy.threadInterruptedForce( ser )  ;
+//            }
+//            new UiHandler( this.getApplicationContext() ).toast("全部线程停止成功");
+            ThreadpoolScriptManager.shutDownAll();
            // GlobalAppContext.toast_( "全部线程停止成功" );
         }
 

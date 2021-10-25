@@ -15,6 +15,7 @@ import org.opencv.core.Point;
 
 import java.lang.reflect.Array;
 import java.net.Socket;
+import java.sql.Struct;
 import java.util.Map;
 
 public class UiSelectorImp {
@@ -34,7 +35,137 @@ public class UiSelectorImp {
 
     }
 
+    public  UiObject swipeNodeRightToLeft( Object nodeCondition ){
+        return swipeNode(nodeCondition,"hori",-0.05f,0.95f,300,500);
+    }
 
+    public  UiObject swipeNodeleftToRight( Object nodeCondition ){
+        return swipeNode(nodeCondition,"hori",0.05f,0.95f,300,500);
+    }
+
+    public  UiObject swipeNodeDownToTop( Object nodeCondition ){
+        return swipeNode(nodeCondition,"",-0.05f,0.95f,300,500);
+    }
+
+    public  UiObject swipeNodeTopToDown( Object nodeCondition ){
+        return swipeNode(nodeCondition,"",0.05f,0.95f,300,500);
+    }
+
+    /** 根据找到的节点,在节点范围内按指定参数滑动,没找到返回null，不执行滑动动作
+     * @param nodeCondition
+     * @param dir "hori"表示水平,默认垂直滑动
+     * @param distanceBegin 滑动起点矩形范围的百分比-0.1到1.0
+     *        dir="hori",负数从右-左,取矩形的右边0.1-1.0的百分比范围某个随机坐标作为滑动起点.
+     *        dir=其它值,负数表示从下到上滑动,正数从上到下
+     * @param distanceSwp   0.1-n 滑动相对节点范围百分比大小的距离
+     * @param swpMinTimeMs  滑动随机延时最小值ms
+     * @param swpMaxTimeMs  滑动随机延时最大值ms
+     * @return 没找到返回null
+     * ex:
+     * var testNode= mapOf<String,String>
+     *     ( "text" to "google","pa" to "2","ch" to "0,0,1,1" )
+     * node.swp_exact_rg_node ( testNode,"hori",-0.2,0.8 , 500,600   )
+     */
+    public UiObject swipeNode(Object nodeCondition, String dir,
+                              float distanceBegin,float distanceSwp,
+                              int swpMinTimeMs,int swpMaxTimeMs ){
+        UiObject uiObject=fnode( nodeCondition );
+        Rect rect = null;
+        int distance = 0;
+        int totalDistance=0;
+        Rect rectNode=null;
+        if (uiObject!=null){
+
+            rect=uiObject.bounds();
+            rectNode=new Rect( rect );
+             //水平滑动的判断
+             if (dir.equals("hori")){
+                 totalDistance=rect.right-rect.left;
+                 if (  distanceBegin <0 ){
+                     Log.d(TAG, "swipeNode: 从右到左");
+                     rect.left= (int) (rect.right+totalDistance*distanceBegin);
+                     distance= (int) (totalDistance*distanceSwp*-1);
+                 }else{
+                     Log.d(TAG, "swipeNode: 从左到右");
+                     rect.right= (int) (rect.left+totalDistance*distanceBegin);
+                     distance= (int) (totalDistance*distanceSwp);
+                 }
+
+             }else {
+                 totalDistance=rect.bottom -rect.top;
+                 if( distanceBegin<0 ){
+                     Log.d(TAG, "swipeNode: 从下到上");
+                     rect.top= (int) (rect.bottom+totalDistance*distanceBegin );
+                     distance= (int) (totalDistance*distanceSwp*-1);
+                 }else{
+                     Log.d(TAG, "swipeNode: 从上到下");
+                     rect.bottom = (int) (rect.top+totalDistance*distanceBegin );
+                     distance= (int) (totalDistance*distanceSwp);
+                 }
+                    
+             }
+        }else
+            return null;
+
+        int x=r_( rect.left,rect.right );
+        int y=r_(rect.top,rect.bottom );
+        int xfloat=r_(-10,10);
+        int yfloat=r_(-5,5 );
+
+        Log.d(TAG, "swipeNode: rectUiobject="+rectNode );
+        Log.d(TAG, "swipeNode: rect="+rect);
+        Log.d(TAG, "swipeNode: x="+x );
+        Log.d(TAG, "swipeNode: y="+y );
+        Log.d(TAG, "swipeNode: totaldis"+totalDistance );
+        Log.d(TAG, "swipeNode: distance="+distance );
+        Log.d(TAG, "swipeNode: x-float="+xfloat );
+        Log.d(TAG, "swipeNode: y-float="+yfloat );
+        Log.d(TAG, "swipeNode: ");
+
+        int time=r_( swpMinTimeMs,swpMaxTimeMs );
+        int x2 = 0,y2=0;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (dir.equals("hori")) {
+
+                    y2=y+yfloat;
+                    x2=x+distance;
+                     Log.d(TAG, "swipeNode: x2=x+distance="+x2 );
+                    //确认滑动坐标>0 <节点边界
+                    x2=x2<1?1:x2;
+                    x2=x2>rectNode.right?rectNode.right:x2;
+
+                    y2=y2<1?1:y2;
+                    y2=y2>rectNode.bottom?rectNode.bottom:y2;
+
+                    Log.d(TAG, "swipeNode: x2="+x2 );
+                    Log.d(TAG, "swipeNode: y2="+y2 );
+                    Log.d(TAG, "swipeNode: swpXy="+x+","+y+","+x2+","+y2  );
+                    simpleActionAutomator.swipe( x,y,x2,y2,time );
+                    //simpleActionAutomator.paste()
+                }else{
+
+                    x2=x+xfloat;
+                    y2=y+distance;
+                    Log.d(TAG, "swipeNode: y2=y+distance="+y2 );
+                    //确认滑动坐标>0 <节点边界
+                    y2=y2<1?1:y2;
+                    y2=y2>rectNode.bottom?rectNode.bottom:y2;
+
+                    x2=x2<1?1:x2;
+                    x2=x2>rectNode.right?rectNode.right:x2;
+
+                    Log.d(TAG, "swipeNode: x2="+x2 );
+                    Log.d(TAG, "swipeNode: y2="+y2 );
+                    Log.d(TAG, "swipeNode: swpXy="+x+","+y+","+x2+","+y2  );
+                    simpleActionAutomator.swipe(x,y,x2,y2,time);
+
+            }
+        }
+        Log.d(TAG, "swipeNode: ------------------------------");
+        return uiObject;
+
+    }
 
     public UiObject clickXy(Map<String,String> nodeCondition ) throws Exception {
         UiObject uiObject=fnode(nodeCondition);
@@ -45,14 +176,13 @@ public class UiSelectorImp {
                 Rect rect= uiObject.bounds();
                 //Log.d(TAG, "clickXy: rect.bounds="+uiObject.bounds()+",text="+uiObject.text()  );
                 //Log.d(TAG, "clickXy: rect.bounds="+uiObject.boundsInParent() +",text="+uiObject.text() );
-
                 rect.set( rect.left+1,rect.top+1,rect.right-1,rect.bottom-1 );
                 Log.d(TAG, "clickXy: rect.right="+rect.right );
                 int x=r_( rect.left,rect.right );
                 int y=r_(rect.top,rect.bottom);
                 Log.d(TAG, "clickXy: "+x+","+y+","+getUbjectDes(uiObject) );
 
-               if(simpleActionAutomator.click( x,y ) )
+               if( simpleActionAutomator.click( x,y ) )
                    Log.d(TAG, "clickXy: true");
                return uiObject;
 
@@ -134,10 +264,8 @@ public class UiSelectorImp {
             Point p= imagesImp.findMultiColors( col,rect,0 );
 
             if (p!=null){
-
                 Log.d(TAG, "clkNodeWaitCorlor: not-clicked,but color-true");
                 return uiObject;
-
             }else{
 
                 long stTime=System.currentTimeMillis();
@@ -173,6 +301,7 @@ public class UiSelectorImp {
         int randomNumber;
         randomNumber = (int) (((max - min + 1) * Math.random() + min));
         return randomNumber;
+
     }
 
 //    public boolean waitFalseEx( Object nodeCondition ) throws Exception {
@@ -316,7 +445,6 @@ public class UiSelectorImp {
         }else{
             uiObject = uiSelector.findOne ( timeout,0);
         }
-
 
         return uiObject;
 
@@ -479,6 +607,13 @@ public class UiSelectorImp {
         if ( x<0||y<0||x2<0||y2<0 )
             return true;
         return false;
+    }
+
+    public UiObject fnode( Object obj ){
+        if (obj.getClass().isArray())
+            return fnode( ( Map<String, String>[] ) obj);
+        else
+            return fnode( (Map<String,String>) obj );
     }
 
 //ex: y移动到屏幕2=mapOf<String,String>( "desc" to "移动到屏幕2","pa" to "2","ch" to "0,0,1,1" )

@@ -42,7 +42,6 @@ import androidx.core.content.ContextCompat;
 import com.nk.nkscript.tinker.app.BaseBuildInfo;
 import com.nk.nkscript.tinker.app.BuildInfo;
 import com.nk.nkscript.tinker.util.Utils;
-import com.stardust.app.GlobalAppContext;
 import com.tencent.tinker.lib.library.TinkerLoadLibrary;
 import com.tencent.tinker.lib.tinker.Tinker;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
@@ -50,9 +49,9 @@ import com.tencent.tinker.loader.shareutil.ShareConstants;
 import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 import org.autojs.autojs.nkScript.interImp.EnvScriptRuntime;
+import org.autojs.autojs.nkScript.interImp.webSocket.WebSocketImp;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
 
 
 public class MainActivity extends  AppCompatActivity {
@@ -79,8 +78,11 @@ public class MainActivity extends  AppCompatActivity {
         }
     };
 
+    TextView textViewConnection;
+    TextView  textViewLogReceive;
 
-
+    Button buttonConnect;
+    Button buttonSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,7 @@ public class MainActivity extends  AppCompatActivity {
         //GlobalAppContext.set( getApplication() );
         EnvScriptRuntime.getAutoJs();
 
-       // Log.d(TAG, (  Integer.parseInt( "f9f6fe",) );
+
 
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
         Log.e(TAG, "ARK HOT Running status = " + isARKHotRunning);
@@ -165,6 +167,8 @@ public class MainActivity extends  AppCompatActivity {
                 getApplication().startActivity( new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
+
+        new WebSocketImp( MainActivity.this );
 
     }
 

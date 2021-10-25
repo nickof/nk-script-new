@@ -10,7 +10,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.stardust.app.GlobalAppContext;
 import com.stardust.app.OnActivityResultDelegate;
 import com.stardust.app.SimpleActivityLifecycleCallbacks;
 import com.stardust.autojs.core.accessibility.AccessibilityBridge;
@@ -20,12 +19,9 @@ import com.stardust.autojs.core.image.capture.ScreenCaptureRequester;
 import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.autojs.runtime.accessibility.AccessibilityConfig;
 import com.stardust.autojs.runtime.app.AppUtils;
-import com.stardust.util.ResourceMonitor;
 import com.stardust.util.ScreenMetrics;
 import com.stardust.util.UiHandler;
 import com.stardust.view.accessibility.AccessibilityService;
-
-import org.mozilla.javascript.WrappedException;
 
 //import com.stardust.autojs.core.image.capture.ScreenCaptureRequestActivity;
 

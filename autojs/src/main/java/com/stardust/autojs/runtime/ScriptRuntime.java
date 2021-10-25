@@ -69,7 +69,6 @@ public class ScriptRuntime {
 
     private static final String TAG = "ScriptRuntime";
 
-
     public static class Builder {
         private UiHandler mUiHandler;
 /*        private Console mConsole;*/
@@ -77,8 +76,6 @@ public class ScriptRuntime {
         private AppUtils mAppUtils;
         private ScreenCaptureRequester mScreenCaptureRequester;
   /*    private Supplier<AbstractShell> mShellSupplier;
-
-
         private ScriptEngineService mEngineService;*/
 
         public Builder() {
@@ -115,7 +112,6 @@ public class ScriptRuntime {
         }
 
     }
-
 
 
     @ScriptVariable
@@ -177,10 +173,8 @@ public class ScriptRuntime {
     public  Plugins plugins;
 */
 
-
-      @ScriptVariable
+    @ScriptVariable
     public final AppUtils app;
-
 
     @ScriptVariable
     public final Files files;
