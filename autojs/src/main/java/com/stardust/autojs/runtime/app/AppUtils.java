@@ -6,14 +6,14 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.provider.Settings;
 import android.util.Log;
-
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.annotation.ScriptInterface;
 import com.stardust.util.IntentUtil;
-
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -32,6 +32,14 @@ public class AppUtils {
         mFileProviderAuthority = null;
     }
 
+    public Context getmContext() {
+        return mContext;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
+
     public AppUtils(Context context, String fileProviderAuthority) {
         mContext = context;
         mFileProviderAuthority = fileProviderAuthority;
@@ -42,7 +50,7 @@ public class AppUtils {
         try {
             PackageManager packageManager = mContext.getPackageManager();
             mContext.startActivity(packageManager.getLaunchIntentForPackage(packageName)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK) );
             return true;
         } catch (Exception e) {
             return false;
@@ -109,6 +117,12 @@ public class AppUtils {
     }
 
     @ScriptInterface
+    public void showPackageDetail(String packageName) {
+        mContext.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS , Uri.parse("package:" + packageName))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
+    @ScriptInterface
     public void viewFile(String path) {
         if (path == null)
             throw new NullPointerException("path == null");
@@ -136,5 +150,6 @@ public class AppUtils {
         mCurrentActivity = new WeakReference<>(currentActivity);
         Log.d("App", "setCurrentActivity: " + currentActivity);
     }
+
 
 }

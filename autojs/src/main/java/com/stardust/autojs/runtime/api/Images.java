@@ -1,22 +1,29 @@
 package com.stardust.autojs.runtime.api;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 
 import androidx.annotation.RequiresApi;
 
+import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.annotation.ScriptVariable;
 import com.stardust.autojs.core.image.ColorFinder;
 import com.stardust.autojs.core.image.ImageWrapper;
@@ -37,13 +44,17 @@ import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -123,7 +134,19 @@ public class Images {
         path = mScriptRuntime.files.path(path);
         ImageWrapper image = captureScreen();
         if (image != null) {
+            //String uriString = MediaStore.Images.Media.insertImage(mContext.getContentResolver(),image.getBitmap(), "截图-20141121", "这是我的截图");
             image.saveTo(path);
+            return true;
+        }
+        return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public boolean captureScreenToAlbum() {
+        //path = mScriptRuntime.files.path(path);
+        ImageWrapper image = captureScreen();
+        if (image != null) {
+            String uriString = MediaStore.Images.Media.insertImage(mContext.getContentResolver(),image.getBitmap(), "截图-20141121", "这是我的截图");
             return true;
         }
         return false;
@@ -148,6 +171,58 @@ public class Images {
         }
         return image.pixel(x, y);
     }
+
+    /**
+        截图保存相册
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public File captureSaveImageToGallery() {
+        //Bitmap bitmap = BitmapFactory.decodeByteArray(data,0,data.length);
+        ImageWrapper image = captureScreen();
+        Bitmap bitmap=image.getBitmap();
+
+        DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        String fileName = "nkScreen-" + format.format(new Date())+".png";
+        // 保存图片至指定路径
+        String storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()+"LS" ;
+        Log.d(TAG, "captureSaveImageToGallery: path="+storePath );
+        File appDir = new File(storePath);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            //通过io流的方式来压缩保存图片(80代表压缩20%)
+            boolean isSuccess = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+            // 其次把文件插入到系统图库
+            try {
+                MediaStore.Images.Media.insertImage(mContext.getContentResolver(), file.getAbsolutePath(), fileName, null);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            //发送广播通知系统图库刷新数据
+            Log.d(TAG, "captureSaveImageToGallery: 发送广播通知系统图库刷新数据");
+            Uri uri = Uri.fromFile(file);
+            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+
+            if (isSuccess) {
+                GlobalAppContext.toast("图片已保存至+"+file);
+                return file;
+            } else {
+                GlobalAppContext.toast("图片已保存失败+"+file);
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+//————————————————
+//    版权声明：本文为CSDN博主「weixin_38934440」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+//    原文链接：https://blog.csdn.net/weixin_38934440/article/details/106619501
 
     public static ImageWrapper concat(ImageWrapper img1, ImageWrapper img2, int direction) {
         if (!Arrays.asList(Gravity.LEFT, Gravity.RIGHT, Gravity.TOP, Gravity.BOTTOM).contains(direction)) {

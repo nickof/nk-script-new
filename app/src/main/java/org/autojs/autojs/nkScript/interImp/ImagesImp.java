@@ -1,7 +1,14 @@
 package org.autojs.autojs.nkScript.interImp;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.image.ColorFinder;
@@ -15,6 +22,7 @@ import org.autojs.autojs.nkScript.Run;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +45,8 @@ public class ImagesImp {
     public final ScreenMetrics mScreenMetrics;
 
     public ImagesImp()  {
+
+
         scriptRuntime= EnvScriptRuntime.getScriptRuntime();
         images = scriptRuntime.getImages();
         mScreenMetrics = scriptRuntime.getScreenMetrics();
@@ -51,6 +61,7 @@ public class ImagesImp {
 
 
     public void requestWaitPermission() throws Exception {
+
             long stTime = System.currentTimeMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 //images.initOpenCvIfNeeded()
@@ -108,6 +119,7 @@ public class ImagesImp {
     }
 
     public void waitPermission2() throws InterruptedException {
+
         Log.d(TAG, "waitPermission2: run");
         if (images.getmScreenCapturer()==null){
             while (this.images.getmScreenCapturer()==null ){
@@ -123,7 +135,21 @@ public class ImagesImp {
     //"7a7a7a,35|78|6200ee,315|116|ffffff,813|-183|6200ee,537|-251|3700b3"
     //"60|305|7a7a7a,95|383|6200ee,375|421|ffffff,873|122|6200ee,597|54|3700b3"
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public boolean captureScreen( String path ) {
+//        if (!hasRequiredPermissions())
+//            askForRequiredPermissions();
+        return images.captureScreen(path);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public File captureSaveImageToGallery() {
+        return images.captureSaveImageToGallery();
+    }
+
+
     public String colorTransformMultiColors( String colorGroup ){
+
         //"60|305|7a7a7a,95|383|6200ee,375|421|ffffff,873|122|6200ee,597|54|3700b3"
         String []colorArr=colorGroup.split(",");
         StringBuilder stringBuilder=new StringBuilder();
@@ -156,6 +182,7 @@ public class ImagesImp {
     //[28,83,940,905]
     //mapOf<String,String>( "c" to "48|21|d7ccf0,84|196|6200ee,
     // 147|418|ffffff","s" to "0.9","r" to "[68,266,1057,794]")
+
     public Point findMultiColors(  Map<String,String> map) throws InterruptedException {
         String rect;
         int threshold=0;
@@ -252,7 +279,6 @@ public class ImagesImp {
         if (imageStat==imageStat_release){
             imageWrapperMain=images.captureScreen();
         }
-
         return imageWrapperMain;
     }
 

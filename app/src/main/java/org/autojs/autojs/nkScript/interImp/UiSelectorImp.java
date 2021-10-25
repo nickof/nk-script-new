@@ -301,7 +301,6 @@ public class UiSelectorImp {
         int randomNumber;
         randomNumber = (int) (((max - min + 1) * Math.random() + min));
         return randomNumber;
-
     }
 
 //    public boolean waitFalseEx( Object nodeCondition ) throws Exception {
@@ -426,6 +425,9 @@ public class UiSelectorImp {
                 case "class":
                     uiSelector.classNameMatches(v);
                     break;
+                case "pack":
+                    uiSelector.packageName(v);
+                    break;
             }
         }
 
@@ -470,7 +472,7 @@ public class UiSelectorImp {
             }
 
             if ( System.currentTimeMillis()-stTime>timeout )
-                return null;
+                        return null;
 
         }
 

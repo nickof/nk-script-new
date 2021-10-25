@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.Image;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -14,6 +15,7 @@ import com.stardust.pio.UncheckedIOException;
 import org.opencv.android.Utils;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
@@ -27,6 +29,7 @@ public class ImageWrapper {
     private int mWidth;
     private int mHeight;
     private Bitmap mBitmap;
+    private String TAG="nkScript-ImageWrapper";
 
     protected ImageWrapper(Mat mat) {
         mMat = mat;
@@ -111,9 +114,12 @@ public class ImageWrapper {
 
     public void saveTo(String path) {
         ensureNotRecycled();
+        Log.d(TAG, "saveTo: "+path);
         if (mBitmap != null) {
             try {
                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(path));
+
+               //mBitmap.compress(Bitmap.CompressFormat.PNG, 100, new File(path));
             } catch (FileNotFoundException e) {
                 throw new UncheckedIOException(e);
             }

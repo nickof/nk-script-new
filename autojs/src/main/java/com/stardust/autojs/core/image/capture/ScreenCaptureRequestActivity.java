@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,8 @@ import com.stardust.util.IntentExtras;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+
+import java.io.File;
 
 /**
  * Created by Stardust on 2017/5/22.
@@ -58,6 +61,19 @@ public class ScreenCaptureRequestActivity extends Activity {
         context.startActivity(intent);
     }
 
+    public static void requestOpenAlbum(Context context,File path) {
+        if (context==null)
+            Log.d(TAG, "requestOpenAlbum: context-null");
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        IntentExtras.newExtras()
+                .put("album", "1")
+                .put("path",path)
+                .putInIntent(intent);
+        context.startActivity(intent);
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -73,19 +89,29 @@ public class ScreenCaptureRequestActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         IntentExtras extras = IntentExtras.fromIntentAndRelease(getIntent());
         if (extras == null) {
             finish();
             return;
         }
+
+        if (extras.get ("album")!=null){
+                openAlbum( extras.get("path") );
+                finish();
+                return;
+        }
+
         mCallback = extras.get("callback");
         if (mCallback == null) {
             finish();
             return;
         }
+
         mScreenCaptureRequester = new ScreenCaptureRequester.ActivityScreenCaptureRequester(mOnActivityResultDelegateMediator, this);
         mScreenCaptureRequester.setOnActivityResultCallback(mCallback);
         mScreenCaptureRequester.request();
+
     }
 
     @Override
@@ -96,6 +122,13 @@ public class ScreenCaptureRequestActivity extends Activity {
             return;
         mScreenCaptureRequester.cancel();
         mScreenCaptureRequester = null;
+    }
+
+    public void openAlbum( File mPath ){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.fromFile( mPath ), "image/*");
+        startActivity(intent);
     }
 
     @Override

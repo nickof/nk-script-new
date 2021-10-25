@@ -19,9 +19,7 @@ public interface ScreenCaptureRequester {
     void cancel();
 
     interface Callback {
-
         void onRequestResult(int result, Intent data);
-
     }
 
     void request();
@@ -49,7 +47,7 @@ public interface ScreenCaptureRequester {
             if (mResult != null)
                 return;
             if (mCallback != null)
-                mCallback.onRequestResult(Activity.RESULT_CANCELED, null);
+                mCallback.onRequestResult( Activity.RESULT_CANCELED, null);
         }
     }
 

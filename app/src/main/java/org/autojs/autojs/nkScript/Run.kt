@@ -41,7 +41,7 @@ open class Run {
         nod= SetNode()
         node= UiSelectorImp( imagesImp )
 
-        appUtils = AppUtilsImp( node.scriptRuntime.app);
+        appUtils = AppUtilsImp( node.scriptRuntime.app,node );
         // node.scriptRuntime.app
 
     }
@@ -63,11 +63,11 @@ open class Run {
        // val clazz = Class.forName("org.autojs.autojs.nkScript.scriptConllection.test.class")
 
         try {
+
            var clazz =  Class.forName("org.autojs.autojs.nkScript.scriptCollection."+scriptName  )
            var method=clazz.getDeclaredMethod("script");
            var obj=clazz.newInstance()
-            //Log.d(TAG, clazz.simpleName+"-className" );
-           //{ method }
+
             poolSub = InterMy.ThreadStart(  { method.invoke(obj); } , 1 )
             listExecutorService.add( poolSub );
             listExecutorService.add( poolMain );
@@ -88,6 +88,7 @@ open class Run {
         GlobalAppContext.toast("script-run.")
         imagesImp.waitPermissionOnlyWait ();
         while (true) {
+
             ++i;
             Log.d( TAG, "scriptRun: run")
             var ver="0901b"
@@ -95,12 +96,12 @@ open class Run {
             Log.d( TAG,"ver="+ver);
             testNode()
             Log.d(TAG,"script-run-loop"+i )
-
             try {
                 Thread.sleep(1000)
             } catch (e: Exception) {
                 throw java.lang.Exception("scriptRun-"+e.toString() ) ;
             }
+
         }
     }
 
@@ -178,6 +179,7 @@ open class Run {
 
 
     fun requestWaitPermission(){
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //images.initOpenCvIfNeeded()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -193,6 +195,7 @@ open class Run {
                 }
             }
         }
+
     }
 
     fun testFindPic(){

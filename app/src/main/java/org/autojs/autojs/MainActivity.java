@@ -92,8 +92,6 @@ public class MainActivity extends  AppCompatActivity {
         //GlobalAppContext.set( getApplication() );
         EnvScriptRuntime.getAutoJs();
 
-
-
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
         Log.e(TAG, "ARK HOT Running status = " + isARKHotRunning);
         Log.e(TAG, "i am on onCreate classloader:" + MainActivity.class.getClassLoader().toString());
@@ -102,7 +100,8 @@ public class MainActivity extends  AppCompatActivity {
 //        Log.e(TAG, "i am on patch onCreate");
 
         mTvMessage = findViewById(R.id.tv_message );
-        askForRequiredPermissions();
+        //askForRequiredPermissions();
+        requestMyPermissions();
         Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
 
         loadPatchButton.setOnClickListener(new View.OnClickListener() {
@@ -178,8 +177,39 @@ public class MainActivity extends  AppCompatActivity {
         }
         if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+
         }
     }
+
+    private void askForRequiredWritePermissions() {
+        if (Build.VERSION.SDK_INT < 23) {
+            return;
+        }
+        if (!hasRequiredPermissions()) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+    }
+
+    private void requestMyPermissions() {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //没有授权，编写申请权限代码
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+        } else {
+            Log.d(TAG, "requestMyPermissions: 有写SD权限");
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //没有授权，编写申请权限代码
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+        } else {
+            Log.d(TAG, "requestMyPermissions: 有读SD权限");
+        }
+    }
+
 
     private boolean hasRequiredPermissions() {
 
@@ -192,6 +222,14 @@ public class MainActivity extends  AppCompatActivity {
             return res == PackageManager.PERMISSION_GRANTED;
         }
     }
+
+    private boolean hasRequiredWritePermissions() {
+            // When SDK_INT is below 16, READ_EXTERNAL_STORAGE will also be granted if WRITE_EXTERNAL_STORAGE is granted.
+            final int res = ContextCompat.checkSelfPermission( this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            return res == PackageManager.PERMISSION_GRANTED;
+
+    }
+
 
     public boolean showInfo(Context context) {
         // add more Build Info
