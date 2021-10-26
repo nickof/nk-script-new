@@ -126,6 +126,7 @@ class SimpleActionAutomator(private val mAccessibilityBridge: AccessibilityBridg
         return performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
     }
 
+
     @ScriptInterface
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     fun powerDialog(): Boolean {

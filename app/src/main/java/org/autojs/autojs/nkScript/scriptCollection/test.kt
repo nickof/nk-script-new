@@ -12,9 +12,9 @@ class test: Run(),InterScript {
 
     override var TAG="script-test"
     override fun script() {
-        imagesImp.requestWaitPermission();
-        var path = imagesImp.captureSaveImageToGallery();
-        appUtils.openAlbum(path);
+       //imagesImp.requestWaitPermission();
+       // var path = imagesImp.captureSaveImageToGallery();
+       //appUtils.allPhoto;
 
  /*     var a=  imagesImp.captureSaveImageToGallery()
         if (a){
@@ -31,7 +31,6 @@ class test: Run(),InterScript {
 //            Thread.sleep(1000);
 //            node.swipeNodeTopToDown( nod.lineListView )
 //            Thread.sleep(1000);
-//
 //        }
     }
 

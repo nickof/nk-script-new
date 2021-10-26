@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
 
 open class Run {
 
-    var scriptName="test"
+    var scriptName="ss.newTest"
 
     lateinit var listExecutorService: ArrayList<ExecutorService>;
     lateinit var poolMain: ExecutorService

@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 
+import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.accessibility.AccessibilityBridge;
 import com.stardust.autojs.core.accessibility.SimpleActionAutomator;
 import com.stardust.autojs.core.accessibility.UiSelector;
@@ -11,11 +12,10 @@ import com.stardust.autojs.runtime.ScriptRuntime;
 import com.stardust.automator.UiGlobalSelector;
 import com.stardust.automator.UiObject;
 import com.stardust.automator.UiObjectCollection;
+import com.stardust.util.ClipboardUtil;
+
 import org.opencv.core.Point;
 
-import java.lang.reflect.Array;
-import java.net.Socket;
-import java.sql.Struct;
 import java.util.Map;
 
 public class UiSelectorImp {
@@ -35,8 +35,47 @@ public class UiSelectorImp {
 
     }
 
+    public static void setClip(String str){
+        ClipboardUtil.setClip( GlobalAppContext.get(),str );
+    }
+
+    public boolean nodeSetText(Object nodeCondition, String text ) throws Exception {
+
+            UiObject uiObject =fnode(nodeCondition);
+            if (uiObject!=null){
+                if (uiObject.isEditable()){
+                    uiObject.setText(text);
+                    return true;
+                }else 
+                {
+                    Log.d(TAG, "clickClearFocusPaste: editable-false");
+                }
+            }
+            return false;
+    }
+
     public  UiObject swipeNodeRightToLeft( Object nodeCondition ){
         return swipeNode(nodeCondition,"hori",-0.05f,0.95f,300,500);
+    }
+
+    public boolean powerDialog(){
+        return simpleActionAutomator.powerDialog();
+    }
+
+    public boolean notifications(){
+        return  simpleActionAutomator.notifications();
+    }
+
+    public boolean quickSettings(){
+        return simpleActionAutomator.quickSettings();
+    }
+
+    public boolean back(){
+        return simpleActionAutomator.back();
+    }
+
+    public boolean home(){
+        return simpleActionAutomator.home();
     }
 
     public  UiObject swipeNodeleftToRight( Object nodeCondition ){

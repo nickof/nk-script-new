@@ -1,25 +1,33 @@
 package com.stardust.autojs.core.image.capture;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.stardust.app.OnActivityResultDelegate;
+import com.stardust.autojs.annotation.ScriptInterface;
 import com.stardust.util.IntentExtras;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Stardust on 2017/5/22.
@@ -27,17 +35,17 @@ import java.io.File;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ScreenCaptureRequestActivity extends Activity {
+
     private static final String TAG ="ScreenCapture" ;
     //openCV4Android 需要加载用到
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-
         @Override
         public void onManagerConnected(int status) {
+
             switch (status) {
+
                 case LoaderCallbackInterface.SUCCESS: {
-                    Log.i("ScreenCapture", "OpenCV loaded successfully");
-//                    mOpenCvCameraView.enableView();
-//                    mOpenCvCameraView.setOnTouchListener(ColorBlobDetectionActivity.this);
+                    Log.i("ScreenCapture", "OpenCV loaded successfully" );
                 }
                 break;
                 default: {
@@ -45,6 +53,7 @@ public class ScreenCaptureRequestActivity extends Activity {
                 }
                 break;
             }
+
         }
     };
 
@@ -65,13 +74,105 @@ public class ScreenCaptureRequestActivity extends Activity {
 
         if (context==null)
             Log.d(TAG, "requestOpenAlbum: context-null");
-        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class)
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class )
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         IntentExtras.newExtras()
                 .put("album", "1")
                 .put("path",path)
-                .putInIntent(intent);
-        context.startActivity(intent);
+                .putInIntent( intent );
+        context.startActivity( intent );
+
+    }
+
+    public static void requestKillApp(Context context,String packageName) {
+
+        if (context==null){
+            Log.d(TAG, "requestKillApp: context-null");
+            return ;
+        }
+
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class )
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        IntentExtras.newExtras()
+                .put("packageName", packageName)
+                .putInIntent( intent );
+        context.startActivity( intent );
+
+
+    }
+
+    public static void requestGetAllPhoto(Context context ){
+              if (context==null){
+            Log.d(TAG, "requestKillApp: context-null");
+            return ;
+        }
+
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class )
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        IntentExtras.newExtras()
+                .put("getAllPhoto", "1")
+                .putInIntent( intent );
+        context.startActivity( intent );
+    }
+
+    public List<Photo> getAllPhoto() {
+        Log.d(TAG, "getAllPhoto: ");
+        //读取手机中的相片
+        Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
+        List<Photo> mPhotoList = new ArrayList<Photo>();
+        while (cursor.moveToNext()) {
+            //获取图片的路径
+            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            if (path != null && path.length() > 0) {
+                //获取图片的名称
+                String name = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
+                //获取图片最后修改的日期
+                //byte[] date = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+                File file = new File(path);
+                long modifieTime = file.lastModified();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                String date = sdf.format(new Date(modifieTime));
+                //获取图片的大小
+                long size = cursor.getLong(cursor.getColumnIndex( MediaStore.Images.Media.SIZE ) );
+                Photo photo = new Photo(name, date, size, path);
+                Log.d(TAG, "getAllPhoto: photo="+photo );
+                mPhotoList.add(photo);
+            }
+        }
+
+        Log.d(TAG, "getAllPhoto: 照片数="+mPhotoList.size()  );
+        return mPhotoList;
+
+    }
+
+    public boolean killAppBackGround( String packageName ){
+
+        ActivityManager mActivityManager = (ActivityManager)
+                this.getSystemService(Context.ACTIVITY_SERVICE);
+        Method method = null;
+        try {
+            method = Class.forName("android.app.ActivityManager").getMethod("forceStopPackage", String.class);
+            method.setAccessible(true);
+            method.invoke(mActivityManager, packageName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "killAppBackGround: 1");
+        ActivityManager manager =  (ActivityManager) this.getSystemService(this.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> activityes = ((ActivityManager)manager).getRunningAppProcesses();
+
+        Log.d(TAG, "killAppBackGround: 2");
+        for (int iCnt = 0; iCnt < activityes.size(); iCnt++){
+            Log.d(TAG, "killAppBackGround:  "+"APP: "+iCnt +" "+ activityes.get(iCnt).processName);
+            if (activityes.get(iCnt).processName.contains( packageName )){
+                android.os.Process.sendSignal(activityes.get(iCnt).pid, android.os.Process.SIGNAL_KILL);
+                android.os.Process.killProcess(activityes.get(iCnt).pid);
+                Log.d(TAG, "killAppBackGround: suc..");
+                return true;
+            }
+        }
+        return false;
 
     }
 
@@ -87,6 +188,19 @@ public class ScreenCaptureRequestActivity extends Activity {
         }*/
     }
 
+
+    @ScriptInterface
+    public boolean launchPackage(String packageName) {
+        try {
+            PackageManager packageManager = getApplication().getPackageManager();
+            getApplication().startActivity(packageManager.getLaunchIntentForPackage( packageName )
+                    .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK) );
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,10 +212,32 @@ public class ScreenCaptureRequestActivity extends Activity {
             return;
         }
 
+        if (extras.get("getAllPhoto")!=null){
+            getAllPhoto();
+            finish();
+            return;
+        }
+
         if (extras.get ("album")!=null){
                 openAlbum( extras.get("path") );
                 finish();
                 return;
+        }
+
+        if (extras.get("packageName")!=null ){
+            this.setVisible(false);
+            launchPackage( "jp.naver.line.android" );
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            killAppBackGround(extras.get("packageName"));
+            finish();
+            killAppBackGround(extras.get("packageName"));
+            return;
         }
 
         mCallback = extras.get("callback");
@@ -111,7 +247,7 @@ public class ScreenCaptureRequestActivity extends Activity {
         }
 
         mScreenCaptureRequester = new ScreenCaptureRequester.ActivityScreenCaptureRequester(mOnActivityResultDelegateMediator, this);
-        mScreenCaptureRequester.setOnActivityResultCallback(mCallback);
+        mScreenCaptureRequester.setOnActivityResultCallback( mCallback );
         mScreenCaptureRequester.request();
 
     }

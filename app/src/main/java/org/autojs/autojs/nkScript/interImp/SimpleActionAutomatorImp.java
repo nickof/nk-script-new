@@ -9,6 +9,7 @@ import com.nk.nkscript.tinker.util.Utils;
 import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.accessibility.SimpleActionAutomator;
 import com.stardust.autojs.runtime.ScriptRuntime;
+import com.stardust.automator.UiObject;
 import com.stardust.automator.simple_action.SimpleAction;
 
 import org.autojs.autojs.autojs.AutoJs;
@@ -23,10 +24,6 @@ public class SimpleActionAutomatorImp {
     public SimpleActionAutomatorImp( ) {
         scriptRuntime=EnvScriptRuntime.getScriptRuntime();
         simpleActionAutomator=scriptRuntime.automator;
-    }
-
-    public void clickRect(Rect rect){
-        
     }
 
     public  boolean click(int x,int y){

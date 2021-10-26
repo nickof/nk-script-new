@@ -46,22 +46,19 @@ public class ImagesImp {
 
     public ImagesImp()  {
 
-
         scriptRuntime= EnvScriptRuntime.getScriptRuntime();
         images = scriptRuntime.getImages();
         mScreenMetrics = scriptRuntime.getScreenMetrics();
         Log.d(TAG, "ImagesImp: screenMetrics mDesign="+ mScreenMetrics.mDesignWidth
         +","+ mScreenMetrics.mDesignHeight);
-        //screenMetrics.setScreenMetrics(1080,1920);
+
         colorFinder =new ColorFinder(mScreenMetrics);
         Log.d(TAG, "ImagesImp: cons-finish");
         //this.run=run;
 
     }
 
-
     public void requestWaitPermission() throws Exception {
-
             long stTime = System.currentTimeMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 //images.initOpenCvIfNeeded()

@@ -40,7 +40,7 @@ public class AppUtils {
         this.mContext = mContext;
     }
 
-    public AppUtils(Context context, String fileProviderAuthority) {
+    public AppUtils( Context context, String fileProviderAuthority) {
         mContext = context;
         mFileProviderAuthority = fileProviderAuthority;
     }
@@ -49,7 +49,7 @@ public class AppUtils {
     public boolean launchPackage(String packageName) {
         try {
             PackageManager packageManager = mContext.getPackageManager();
-            mContext.startActivity(packageManager.getLaunchIntentForPackage(packageName)
+            mContext.startActivity(packageManager.getLaunchIntentForPackage( packageName )
                     .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK) );
             return true;
         } catch (Exception e) {
@@ -150,6 +150,7 @@ public class AppUtils {
         mCurrentActivity = new WeakReference<>(currentActivity);
         Log.d("App", "setCurrentActivity: " + currentActivity);
     }
+
 
 
 }

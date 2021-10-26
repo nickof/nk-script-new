@@ -17,6 +17,7 @@
 package org.autojs.autojs;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,7 @@ import androidx.core.content.ContextCompat;
 import com.nk.nkscript.tinker.app.BaseBuildInfo;
 import com.nk.nkscript.tinker.app.BuildInfo;
 import com.nk.nkscript.tinker.util.Utils;
+import com.stardust.autojs.core.image.capture.ScreenCaptureRequestActivity;
 import com.tencent.tinker.lib.library.TinkerLoadLibrary;
 import com.tencent.tinker.lib.tinker.Tinker;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
@@ -52,6 +54,8 @@ import org.autojs.autojs.nkScript.interImp.EnvScriptRuntime;
 import org.autojs.autojs.nkScript.interImp.webSocket.WebSocketImp;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
+
+import java.util.List;
 
 
 public class MainActivity extends  AppCompatActivity {
@@ -77,6 +81,28 @@ public class MainActivity extends  AppCompatActivity {
             }
         }
     };
+
+    public boolean killAppBackGround( String packageName ){
+
+        Log.d(TAG, "killAppBackGround: 1");
+        ActivityManager manager =  (ActivityManager)  this.getSystemService(this.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> activityes = ((ActivityManager)manager).getRunningAppProcesses();
+
+        Log.d(TAG, "killAppBackGround: 2");
+
+        for (int iCnt = 0; iCnt < activityes.size(); iCnt++){
+            Log.d(TAG, "killAppBackGround:  "+"APP: "+iCnt +" "+ activityes.get(iCnt).processName);
+
+            if (activityes.get(iCnt).processName.contains(packageName)){
+                android.os.Process.sendSignal(activityes.get(iCnt).pid, android.os.Process.SIGNAL_KILL);
+                android.os.Process.killProcess(activityes.get(iCnt).pid);
+                Log.d(TAG, "killAppBackGround: suc..");
+                return true;
+            }
+        }
+        return false;
+
+    }
 
     TextView textViewConnection;
     TextView  textViewLogReceive;
@@ -154,6 +180,8 @@ public class MainActivity extends  AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showInfo(MainActivity.this);
+                ScreenCaptureRequestActivity.requestKillApp(getApplicationContext(),"org.autojs.autojs");
+                //killAppBackGround("jp.naver.line.android");
             }
         });
 
@@ -166,7 +194,6 @@ public class MainActivity extends  AppCompatActivity {
                 getApplication().startActivity( new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
-
         new WebSocketImp( MainActivity.this );
 
     }
@@ -177,7 +204,6 @@ public class MainActivity extends  AppCompatActivity {
         }
         if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-
         }
     }
 

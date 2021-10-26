@@ -146,6 +146,7 @@ public class UiSelector extends UiGlobalSelector {
         return super.idMatches(convertRegex(regex));
     }
 
+
     @Override
     public UiGlobalSelector packageNameMatches(@NotNull String regex) {
         return super.packageNameMatches(convertRegex(regex));
@@ -185,6 +186,7 @@ public class UiSelector extends UiGlobalSelector {
             throw new IllegalThreadStateException("不能在ui线程执行阻塞操作, 请在子线程或子脚本执行findOne()或untilFind()");
         }
     }
+
 
     @ScriptInterface
     public UiObject findOne(long timeout) {
