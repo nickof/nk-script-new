@@ -45,11 +45,16 @@ public class AppUtilsImp {
         this.uiSelectorImp=uiSelectorImp;
     }
 
+    public void openAlbum(String path ){
+        ScreenCaptureRequestActivity.requestOpenAlbum( appUtils.getmContext(), new File(path));
+        //(Activity)appUtils.startActivityForResult(intent,0);
+        // (Activity)scriptRuntime.app.startActivityForResult(getAlbum, IMAGE_CODE);
+    }
+
     public void openAlbum(File path ){
         ScreenCaptureRequestActivity.requestOpenAlbum( appUtils.getmContext(), path);
         //(Activity)appUtils.startActivityForResult(intent,0);
        // (Activity)scriptRuntime.app.startActivityForResult(getAlbum, IMAGE_CODE);
-
     }
 
     public void uninstall(String packageName) {

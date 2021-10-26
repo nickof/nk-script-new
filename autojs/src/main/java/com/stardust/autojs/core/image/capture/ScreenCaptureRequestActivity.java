@@ -62,6 +62,7 @@ public class ScreenCaptureRequestActivity extends Activity {
     }
 
     public static void requestOpenAlbum(Context context,File path) {
+
         if (context==null)
             Log.d(TAG, "requestOpenAlbum: context-null");
         Intent intent = new Intent(context, ScreenCaptureRequestActivity.class)
@@ -89,6 +90,7 @@ public class ScreenCaptureRequestActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         IntentExtras extras = IntentExtras.fromIntentAndRelease(getIntent());
         if (extras == null) {
@@ -125,10 +127,12 @@ public class ScreenCaptureRequestActivity extends Activity {
     }
 
     public void openAlbum( File mPath ){
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(Uri.fromFile( mPath ), "image/*");
         startActivity(intent);
+
     }
 
     @Override
