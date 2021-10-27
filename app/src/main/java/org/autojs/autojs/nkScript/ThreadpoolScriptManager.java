@@ -21,7 +21,7 @@ public class ThreadpoolScriptManager {
         synchronized ( "s" ){
             if (listExecutorServices==null)
                 listExecutorServices=new ArrayList<>();
-            //listExecutorServices.clear();
+
             for ( ExecutorService e :
                 listExecutorServicesScript  ) {
                 listExecutorServices.add(e);
@@ -35,6 +35,17 @@ public class ThreadpoolScriptManager {
             if (listExecutorServices==null)
                 listExecutorServices=new ArrayList<>();
             return listExecutorServices ;
+        }
+    }
+
+    public static boolean isRunning(){
+        getListExecutorServices();
+        if ( listExecutorServices.size()>0 ){
+            new UiHandler( GlobalAppContext.get()).toast("脚本线程已经在执行");
+            return true;
+        }else{
+            new UiHandler( GlobalAppContext.get()).toast("没有线程运行");
+            return false;
         }
     }
 

@@ -50,37 +50,6 @@ public class AppUtilsImp {
         
     }
 
-
-    public void getAllPhoto() {
-            ScreenCaptureRequestActivity.requestGetAllPhoto( appUtils.getmContext() );
-     /*   Log.d(TAG, "getAllPhoto: ");
-        //读取手机中的相片
-        Cursor cursor = scriptRuntime.app.getmContext().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
-        List<Photo> mPhotoList = new ArrayList<Photo>();
-        while (cursor.moveToNext()) {
-            //获取图片的路径
-            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            if (path != null && path.length() > 0) {
-                //获取图片的名称
-                String name = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
-                //获取图片最后修改的日期
-                //byte[] date = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                File file = new File(path);
-                long modifieTime = file.lastModified();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                String date = sdf.format(new Date(modifieTime));
-                //获取图片的大小
-                long size = cursor.getLong(cursor.getColumnIndex( MediaStore.Images.Media.SIZE ) );
-                Photo photo = new Photo(name, date, size, path);
-                mPhotoList.add(photo);
-            }
-        }
-
-        Log.d(TAG, "getAllPhoto: 照片数="+mPhotoList.size()  );
-        return mPhotoList;*/
-
-    }
-
     public AppUtilsImp( AppUtils appUtils,UiSelectorImp uiSelectorImp ) {
 
         scriptRuntime=EnvScriptRuntime.getScriptRuntime();
@@ -90,7 +59,33 @@ public class AppUtilsImp {
 
     }
 
-    public void toast(String text){
+    /**
+     * 删除相册
+     * @return
+     * @throws InterruptedException
+     */
+    public boolean deleteAlbum() throws InterruptedException {
+        ScreenCaptureRequestActivity.requestGetAllPhoto(appUtils.getmContext());
+        long stTime=System.currentTimeMillis();
+        while (true){
+
+            toast( "deleteAlbuming.wait.." );
+            if ( ScreenCaptureRequestActivity.flagBoolAlumdelete ){
+                toast("clear album ok");
+                return true;
+            }
+
+            Thread.sleep( 1000 );
+
+            if ( System.currentTimeMillis() - stTime>30*1000 ){
+                toast("deleteAlbum outtime over 30");
+                return false;
+            }
+        }
+
+    }
+
+    public void toast( String text ){
         GlobalAppContext.toast(text);
     }
 

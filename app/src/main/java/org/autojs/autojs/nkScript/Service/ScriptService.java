@@ -62,10 +62,17 @@ public class ScriptService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: run..");
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             startForeground(1, notification);
         }
+
+        if( !ThreadpoolScriptManager.isRunning ()){
+            run=new Run();
+            run.main();
+        }
         return super.onStartCommand(intent, flags, startId);
+
     }
 
     @Override

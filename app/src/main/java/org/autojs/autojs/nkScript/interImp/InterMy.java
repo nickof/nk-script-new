@@ -11,6 +11,7 @@ import com.stardust.app.GlobalAppContext;
 import com.stardust.util.ClipboardUtil;
 
 import org.autojs.autojs.nkScript.Service.ScriptService;
+import org.autojs.autojs.nkScript.ThreadpoolScriptManager;
 import org.autojs.autojs.nkScript.functionInterface.FunInterThreadMethod;
 import org.autojs.autojs.nkScript.model.ShareDataScript;
 
@@ -40,8 +41,9 @@ public class InterMy {
                     synchronized ( ShareDataScript.ScriptServiceLock ){
                         Log.i(TAG, "KEYCODE_VOLUME_DOWN");
                          application= (Application) GlobalAppContext.get();
-                         intent=new Intent( application, ScriptService.class );
-                        application.stopService (intent);
+                    /*     intent=new Intent( application, ScriptService.class );
+                        application.stopService (intent);*/
+                        ThreadpoolScriptManager.shutDownAll();
                         break;
                     }
                 case KeyEvent.KEYCODE_VOLUME_UP:

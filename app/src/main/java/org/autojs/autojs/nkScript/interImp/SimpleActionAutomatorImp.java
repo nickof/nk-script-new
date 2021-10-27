@@ -1,16 +1,14 @@
 package org.autojs.autojs.nkScript.interImp;
 
-import android.app.Application;
+import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Build;
-import android.os.Environment;
+import android.util.Log;
 
-import com.nk.nkscript.tinker.util.Utils;
-import com.stardust.app.GlobalAppContext;
+import androidx.annotation.RequiresApi;
+
 import com.stardust.autojs.core.accessibility.SimpleActionAutomator;
 import com.stardust.autojs.runtime.ScriptRuntime;
-import com.stardust.automator.UiObject;
-import com.stardust.automator.simple_action.SimpleAction;
 
 import org.autojs.autojs.autojs.AutoJs;
 
@@ -20,6 +18,7 @@ public class SimpleActionAutomatorImp {
     public AutoJs autoJs;
     private ScriptRuntime scriptRuntime;
     private SimpleActionAutomator simpleActionAutomator;
+    public final String TAG="nkScript-SimpleActionAutomatorImp";
 
     public SimpleActionAutomatorImp( ) {
         scriptRuntime=EnvScriptRuntime.getScriptRuntime();
@@ -38,6 +37,22 @@ public class SimpleActionAutomatorImp {
             return simpleActionAutomator.swipe (x,y,x2,y2,delay);
         }else
             return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @SuppressLint("LongLogTag")
+    public boolean clickRect(Rect rect ){
+        int x=r_( rect.left,rect.right );
+        int y=r_(rect.top,rect.bottom);
+        //Log.d(TAG, "clickXy: rect="+rect.toString()+"--x,y="+x+","+y  );
+        Log.d(TAG, "clickXy: "+x+","+y );
+        return simpleActionAutomator.click(x,y);
+    }
+
+    public int r_(int min, int max) {
+        int randomNumber;
+        randomNumber = (int) (((max - min + 1) * Math.random() + min));
+        return randomNumber;
     }
 
 }

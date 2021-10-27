@@ -23,6 +23,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +37,9 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ScreenCaptureRequestActivity extends Activity {
 
-    private static final String TAG ="ScreenCapture" ;
+    private static final String TAG ="nkScript-ScreenCapture" ;
+    public static boolean flagBoolAlumdelete=false;
+    private static boolean flagUpdateAlum=false;
     //openCV4Android 需要加载用到
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -70,6 +73,15 @@ public class ScreenCaptureRequestActivity extends Activity {
         context.startActivity(intent);
     }
 
+    public static void requestUpdateAlum(Context context,String path  ){
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        IntentExtras.newExtras()
+                .put("updateAlbum", path)
+                .putInIntent(intent);
+        context.startActivity(intent);
+    }
+
     public static void requestOpenAlbum(Context context,File path) {
 
         if (context==null)
@@ -98,7 +110,6 @@ public class ScreenCaptureRequestActivity extends Activity {
                 .putInIntent( intent );
         context.startActivity( intent );
 
-
     }
 
     public static void requestGetAllPhoto(Context context ){
@@ -115,16 +126,68 @@ public class ScreenCaptureRequestActivity extends Activity {
         context.startActivity( intent );
     }
 
-    public List<Photo> getAllPhoto() {
+    /**
+     * 删除文件后更新数据库  通知媒体库更新文件夹
+     *
+     * @param context
+     * @param filepath 文件路径（要求尽量精确，以防删错）
+     */
+    public static void updateFileFromDatabase(Context context, String filepath) {
+        String where = MediaStore.Audio.Media.DATA + " like \"" + filepath + "%" + "\"";
+        int i = context.getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null);
+        //int i = context.getContentResolver().de
+        /*
+        if(i>0){
+            Log.e("[msg]", "媒体库更新成功！");
+        }
+         */
+    }
+
+    /**
+     * 删除文件后更新数据库  通知媒体库更新文件夹
+     *
+     * @param context
+     * @param filepath 文件路径（要求尽量精确，以防删错）
+     */
+    public static void updateAlum(Context context, String filepath) throws FileNotFoundException {
+
+        flagUpdateAlum=false;
+        File filePath2=new File( filepath );
+
+        MediaStore.Images.Media.insertImage( context.getContentResolver(  ),
+                filePath2.getAbsolutePath(), System.currentTimeMillis()+".jpg", null );
+        // context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path)));
+        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile( filePath2
+        ) ) );
+
+        flagUpdateAlum=true;
+        //int i = context.getContentResolver().de
+        /*
+        if(i>0){
+            Log.e("[msg]", "媒体库更新成功！");
+        }
+         */
+
+
+    }
+
+    public void getAllPhotoAndDelete() {
+
         Log.d(TAG, "getAllPhoto: ");
+        flagBoolAlumdelete=false;
         //读取手机中的相片
         Cursor cursor = this.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
-        List<Photo> mPhotoList = new ArrayList<Photo>();
+       // List<Photo> mPhotoList = new ArrayList<Photo>();
+        int i=0;
         while (cursor.moveToNext()) {
             //获取图片的路径
             String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
             if (path != null && path.length() > 0) {
-                //获取图片的名称
+                deleteSingleFile( path );
+                Log.d(TAG, "getAllPhotoAndDelete: "+path );
+                updateFileFromDatabase(ScreenCaptureRequestActivity.this, path);
+
+/*                //获取图片的名称
                 String name = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
                 //获取图片最后修改的日期
                 //byte[] date = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -136,13 +199,35 @@ public class ScreenCaptureRequestActivity extends Activity {
                 long size = cursor.getLong(cursor.getColumnIndex( MediaStore.Images.Media.SIZE ) );
                 Photo photo = new Photo(name, date, size, path);
                 Log.d(TAG, "getAllPhoto: photo="+photo );
-                mPhotoList.add(photo);
+                mPhotoList.add(photo);*/
+                i++;
+               // mPhotoList.add(new Photo("name","date",11,path));
             }
         }
+        flagBoolAlumdelete=true;
+        Log.d(TAG, "getAllPhoto: 照片数="+i  );
 
-        Log.d(TAG, "getAllPhoto: 照片数="+mPhotoList.size()  );
-        return mPhotoList;
+    }
 
+    /** 删除单个文件
+     * @param filePath$Name 要删除的文件的文件名
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public static boolean deleteSingleFile(String filePath$Name) {
+        File file = new File(filePath$Name);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                //Log.e("[Method]", "FileTools.deleteSingleFile: 删除单个文件" + filePath$Name + "成功！");
+                return true;
+            } else {
+                //Log.e("[Method]", "FileTools.deleteSingleFile: 删除单个文件" + filePath$Name + "失败！");
+                return false;
+            }
+        } else {
+            //Log.e("[Method]", "FileTools.deleteSingleFile: 删除单个文件" + filePath$Name + "不存在！");
+            return false;
+        }
     }
 
     public boolean killAppBackGround( String packageName ){
@@ -188,7 +273,6 @@ public class ScreenCaptureRequestActivity extends Activity {
         }*/
     }
 
-
     @ScriptInterface
     public boolean launchPackage(String packageName) {
         try {
@@ -205,15 +289,25 @@ public class ScreenCaptureRequestActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         IntentExtras extras = IntentExtras.fromIntentAndRelease(getIntent());
         if (extras == null) {
             finish();
             return;
         }
 
+
+        if (extras.get("updateAlbum")!=null){
+            //updateFileFromDatabase(  );
+            try {
+                updateAlum(ScreenCaptureRequestActivity.this,extras.get("updateAlbum")  );
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.d(TAG, "onCreate: updateAlbum exception"+e.toString() );
+            }
+        }
+
         if (extras.get("getAllPhoto")!=null){
-            getAllPhoto();
+            getAllPhotoAndDelete ();
             finish();
             return;
         }
@@ -261,6 +355,8 @@ public class ScreenCaptureRequestActivity extends Activity {
         mScreenCaptureRequester.cancel();
         mScreenCaptureRequester = null;
     }
+
+
 
     public void openAlbum( File mPath ){
 

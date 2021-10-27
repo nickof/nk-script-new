@@ -4,4 +4,5 @@ package org.autojs.autojs.nkScript.model;
 public  class ShareDataScript {
     public static final String ScriptServiceLock="lock";
     public static final String gloaboalTag="nkScript-";
+    public static String serverJson="";
 }

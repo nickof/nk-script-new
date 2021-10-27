@@ -16,10 +16,12 @@ public interface ColorDetector {
         protected final int mR, mG, mB;
 
         public AbstractColorDetector(int color) {
+
             mColor = color;
-            mR = Color.red(color);
-            mG = Color.green(color);
-            mB = Color.blue(color);
+            mR = Color.red( color );
+            mG = Color.green( color );
+            mB = Color.blue( color );
+
         }
     }
 

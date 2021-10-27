@@ -207,6 +207,7 @@ public class Images {
             Log.d(TAG, "captureSaveImageToGallery: 发送广播通知系统图库刷新数据");
             Uri uri = Uri.fromFile(file);
             mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            //mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri ) );
 
             if (isSuccess) {
                 GlobalAppContext.toast("图片已保存至+"+file);

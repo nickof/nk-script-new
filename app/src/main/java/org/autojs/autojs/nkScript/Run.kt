@@ -1,12 +1,16 @@
 package org.autojs.autojs.nkScript
 
+import android.graphics.Rect
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.stardust.app.GlobalAppContext
+import com.stardust.autojs.core.accessibility.SimpleActionAutomator
 import com.stardust.autojs.core.image.ColorFinder
 import com.stardust.autojs.runtime.api.Images
 import com.stardust.autojs.runtime.app.AppUtils
+import com.stardust.automator.UiObject
 import org.autojs.autojs.nkScript.interImp.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -30,6 +34,7 @@ open class Run {
     lateinit var colorFinder: ColorFinder
     lateinit var nod: SetNode
     lateinit var appUtils: AppUtilsImp;
+    lateinit var sim:SimpleActionAutomatorImp ;
 
     constructor() {
 
@@ -41,17 +46,21 @@ open class Run {
         nod= SetNode()
         node= UiSelectorImp( imagesImp )
 
-        appUtils = AppUtilsImp( node.scriptRuntime.app,node );
+        sim= SimpleActionAutomatorImp()
+
+        appUtils = AppUtilsImp( node.scriptRuntime.app,node )
         // node.scriptRuntime.app
 
     }
 
 //    lateinit var simpleActionAutomator: SimpleActionAutomator
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun main(){
         api_init();
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun api_init(){
 
         //新建线程池
@@ -68,9 +77,10 @@ open class Run {
            var method=clazz.getDeclaredMethod("script");
            var obj=clazz.newInstance()
 
-            poolSub = InterMy.ThreadStart(  { method.invoke(obj); } , 1 )
-            listExecutorService.add( poolSub );
+            poolMain = InterMy.ThreadStart(  { method.invoke(obj); } , 1 )
+            poolSub = InterMy.ThreadStart(  { jk2() } , 1 )
             listExecutorService.add( poolMain );
+            listExecutorService.add( poolSub );
             ThreadpoolScriptManager.setListExecutorServices( listExecutorService );
 
          } catch (e: Exception) {
@@ -86,6 +96,8 @@ open class Run {
         var i:Int=0;
         //imagesImp2. requestWaitPermission ();
         GlobalAppContext.toast("script-run.")
+
+
         imagesImp.waitPermissionOnlyWait ();
         while (true) {
 
@@ -107,31 +119,47 @@ open class Run {
 
 
      fun testNode(){
-         //node.waitGrp( nod.testArrayFix );
          node.clickXy( nod.zz主页2 )
-         //node.fnode (  nod.switch);
-         //node.clkNodeWaitCorlor( nod.switch,3000,50);
      }
 
     fun toast( string: String){
         GlobalAppContext.toast(string)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun jk2() {
 
-        //imagesImp.waitPermission();
+        nod= SetNode()
+        //imagesImp.requestPermissionOnce()
+        //var uiObject:UiObject;
+        for (index in 1..10 ){
+          var uiObject=node.fnode( nod.permissionScreen )
+              if ( uiObject!=null ){
+                  var rect=uiObject.bounds();
+                  rect.set( rect.left,rect.top,rect.left+5,rect.bottom )
+                  sim.clickRect( rect );
+              }
+//            if (node.clickXy( nod.permissionScreen )!=null){
+////                if (node.waitFalse( nod.permissionScreen )!=null)
+////                    break;
+//            }
+            toast( "click-permission-"+(10- index) )
+            Thread.sleep( 1000 )
+        }
+
         //images.requestScreenCapture(0);
-        //imagesImp.waitPermission2();
+        //imagesImp.waitPermissionOnlyWait();
         var i:Int=0;
-        imagesImp.requestWaitPermission();
 
         while (true) {
 
             ++i;
-            Log.d( TAG, "jk2: run")
+            Log.d( TAG, "watch: run")
             var ver="0901b"
-            GlobalAppContext.toast( "ver="+ver+i+","+Thread.currentThread().name )
+            GlobalAppContext.toast( "watch: run-ver="+ver +";time=" +i )
             Log.d( TAG,"ver="+ver);
+            node.waitFalseEx( nod.permissionScreen )
+            //imagesImp.captureSaveImageToGallery(
 
 /*
             try {
@@ -151,7 +179,7 @@ open class Run {
             }*/
 
             try {
-                Thread.sleep(1000)
+                Thread.sleep(5000)
             } catch (e: Exception) {
                 return;
             }
@@ -177,7 +205,6 @@ open class Run {
 
     }
 
-
     fun requestWaitPermission(){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -202,6 +229,7 @@ open class Run {
         // imagesImp.waitPermission2()
        // requestWaitPermission()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
             var imagesScree=  images.captureScreen()
             var  path:String= Environment.getExternalStorageDirectory().toString()+"/1.png";
             var imagesTemplates=images.read( path )

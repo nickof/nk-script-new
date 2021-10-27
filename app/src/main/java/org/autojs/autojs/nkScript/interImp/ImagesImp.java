@@ -58,12 +58,20 @@ public class ImagesImp {
 
     }
 
+    public void requestPermissionOnce(){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (images.getmScreenCapturer()==null ) {
+                    images.requestScreenCapture(3);
+                }
+            }
+    }
+
     public void requestWaitPermission() throws Exception {
+
             long stTime = System.currentTimeMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 //images.initOpenCvIfNeeded()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
                     if (images.getmScreenCapturer()==null ) {
                         Log.d(TAG, "requestWaitPermission: request permission");
                         images.requestScreenCapture(3);
@@ -75,18 +83,18 @@ public class ImagesImp {
                             if (System.currentTimeMillis()-stTime>1000*30){
                                 throw new Exception("wait-permission-outtime");
                             }
-                        } catch (InterruptedException e) {
+                        } catch ( InterruptedException e ) {
                             Log.d(TAG, "interrupted");
-                            throw new Exception("wait-permisson-interrupted");
-                        } catch (Exception e) {
+                            throw new Exception( "wait-permisson-interrupted" );
+                        } catch ( Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
                 images.initOpenCvIfNeeded();
-        }
 
+        }
 
     public void waitPermissionOnlyWait() throws Exception {
 
@@ -97,6 +105,7 @@ public class ImagesImp {
                 //images.requestScreenCapture(3);
                 while (images.getmScreenCapturer() == null) {
                     Log.d(TAG, "wait-permisson-only-wait");
+
                     try {
                         Thread.sleep(1000);
                         if (System.currentTimeMillis()-stTime>1000*30){
@@ -139,12 +148,15 @@ public class ImagesImp {
         return images.captureScreen(path);
     }
 
+    /**
+     * 截图至相册
+     * @return
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public File captureSaveImageToGallery() {
         return images.captureSaveImageToGallery();
     }
-
-
+    
     public String colorTransformMultiColors( String colorGroup ){
 
         //"60|305|7a7a7a,95|383|6200ee,375|421|ffffff,873|122|6200ee,597|54|3700b3"

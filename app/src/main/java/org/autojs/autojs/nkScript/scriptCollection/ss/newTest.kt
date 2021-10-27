@@ -9,11 +9,14 @@ class newTest: Run(),InterScript {
 
     override fun script() {
         var nodeSS=newNode()
-        appUtils.stopApp ("jp.naver.line.android")
-//        while (true){
-//            node.nodeSetText( nodeSS.test2,"www.google.com")
-//            Thread.sleep(3000)
-//        }
+       // appUtils.stopApp ("jp.naver.line.android")
+        imagesImp.requestWaitPermission();
+        appUtils.deleteAlbum();
+        imagesImp.captureSaveImageToGallery()
+            while (true){
+                appUtils.toast("script-run.");
+            Thread.sleep(3000)
+        }
     }
 
 }

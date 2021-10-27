@@ -741,7 +741,6 @@ public class UiSelectorImp {
                 return null;
         }
 
-
         Log.d(TAG, "getChild: "+uiObject.text()+","+uiObject.bounds()  );
         return uiObject;
 
