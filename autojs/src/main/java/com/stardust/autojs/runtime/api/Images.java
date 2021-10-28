@@ -90,6 +90,7 @@ public class Images {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public ScriptPromiseAdapter requestScreenCapture(int orientation) {
+
         ScriptRuntime.requiresApi(21);
         ScriptPromiseAdapter promiseAdapter = new ScriptPromiseAdapter();
         if (mScreenCapturer != null) {
@@ -109,6 +110,7 @@ public class Images {
         });
         mScreenCaptureRequester.request();
         return promiseAdapter;
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

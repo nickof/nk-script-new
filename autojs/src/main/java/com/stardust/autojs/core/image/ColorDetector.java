@@ -21,7 +21,6 @@ public interface ColorDetector {
             mR = Color.red( color );
             mG = Color.green( color );
             mB = Color.blue( color );
-
         }
     }
 

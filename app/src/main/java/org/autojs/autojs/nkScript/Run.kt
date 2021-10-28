@@ -3,6 +3,7 @@ package org.autojs.autojs.nkScript
 import android.graphics.Rect
 import android.os.Build
 import android.os.Environment
+import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.stardust.app.GlobalAppContext
@@ -12,6 +13,7 @@ import com.stardust.autojs.runtime.api.Images
 import com.stardust.autojs.runtime.app.AppUtils
 import com.stardust.automator.UiObject
 import org.autojs.autojs.nkScript.interImp.*
+import org.autojs.autojs.nkScript.scriptCollection.ss.newTest
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -78,7 +80,8 @@ open class Run {
            var obj=clazz.newInstance()
 
             poolMain = InterMy.ThreadStart(  { method.invoke(obj); } , 1 )
-            poolSub = InterMy.ThreadStart(  { jk2() } , 1 )
+          //  poolMain = InterMy.ThreadStart(  { scriptRun() } , 1 )
+           // poolSub = InterMy.ThreadStart(  { jk2() } , 1 )
             listExecutorService.add( poolMain );
             listExecutorService.add( poolSub );
             ThreadpoolScriptManager.setListExecutorServices( listExecutorService );
@@ -92,6 +95,21 @@ open class Run {
     }
 
     fun scriptRun(){
+    // Looper.prepare()
+//        var clazz =  Class.forName("org.autojs.autojs.nkScript.scriptCollection."+scriptName  )
+//        var method=clazz.getDeclaredMethod("script");
+//        var obj=clazz.newInstance()
+        //method.invoke(obj)
+        //Looper.loop()
+
+    }
+
+    fun requestPermission(){
+//        appUtils.requestSmsPermission()
+        imagesImp.requestWaitPermission()
+    }
+
+ /*   fun scriptRun(){
 
         var i:Int=0;
         //imagesImp2. requestWaitPermission ();
@@ -116,7 +134,7 @@ open class Run {
 
         }
     }
-
+*/
 
      fun testNode(){
          node.clickXy( nod.zz主页2 )

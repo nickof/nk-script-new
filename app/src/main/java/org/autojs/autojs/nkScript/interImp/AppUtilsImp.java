@@ -1,7 +1,9 @@
 package org.autojs.autojs.nkScript.interImp;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -23,12 +25,16 @@ import com.stardust.autojs.runtime.app.AppUtils;
 import org.autojs.autojs.nkScript.interImp.model.Photo;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 public class AppUtilsImp {
 
@@ -38,7 +44,8 @@ public class AppUtilsImp {
     public SimpleActionAutomator simpleActionAutomator;
     public UiSelectorImp uiSelectorImp;
 
-    private String TAG;
+    private String TAG="nkScript-AppUtilsImp";
+    private Uri URI_SMS_INBOX = Uri.parse("content://sms/");
 
     public AppUtilsImp() {
 
@@ -47,7 +54,20 @@ public class AppUtilsImp {
         appUtils = scriptRuntime.app;
         simpleActionAutomator = scriptRuntime.automator;
         //UiSelectorImp uiSelectorImp = new UiSelectorImp( new ImagesImp() ) ;
-        
+    }
+
+
+    public void requestSmsPermission(){
+        ScreenCaptureRequestActivity.requestPermission(appUtils.getmContext() );
+
+  /*      final String REQUEST_CODE_ASK_PERMISSIONS = "123";
+           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasReadSmsPermission = appUtils.getmContext().checkSelfPermission(Manifest.permission.READ_SMS);
+            if (hasReadSmsPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions( new String[] {Manifest.permission.READ_SMS },REQUEST_CODE_ASK_PERMISSIONS );
+                return;
+            }
+        }*/
     }
 
     public AppUtilsImp( AppUtils appUtils,UiSelectorImp uiSelectorImp ) {
@@ -58,6 +78,34 @@ public class AppUtilsImp {
         this.uiSelectorImp=uiSelectorImp;
 
     }
+
+    public String getSms( String number ) throws InterruptedException {
+
+        Log.d(TAG, "getSms: request");
+        ScreenCaptureRequestActivity.requestGetSms( appUtils.getmContext(),number );
+
+        long stTime=System.currentTimeMillis();
+        while (true){
+
+            toast( "getSms.wait.." );
+            if ( ScreenCaptureRequestActivity.flagSms ){
+                toast("getSms ok="+ScreenCaptureRequestActivity.smsText );
+                return ScreenCaptureRequestActivity.smsText;
+            }
+
+            Thread.sleep( 1000 );
+            if ( System.currentTimeMillis() - stTime>30*1000 ){
+                toast("getSms over 30");
+                return null;
+            }
+        }
+    }
+
+
+//    三、获取
+//————————————————
+//    版权声明：本文为CSDN博主「LXB-89」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+//    原文链接：https://blog.csdn.net/adminlxb89/article/details/81068419
 
     /**
      * 删除相册
@@ -109,11 +157,13 @@ public class AppUtilsImp {
         return appUtils.launchPackage(packageName);
     }
 
+/*
     public void killAppBackGround( String packageName ) throws InterruptedException {
         launchPackage( packageName );
             Thread.sleep(5000);
         ScreenCaptureRequestActivity.requestKillApp(appUtils.getmContext(), packageName);
     }
+*/
 
     public String getPackageName( String appName ){
         return appUtils.getPackageName( appName );

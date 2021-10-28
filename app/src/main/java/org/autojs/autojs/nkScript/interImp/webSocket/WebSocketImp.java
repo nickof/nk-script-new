@@ -45,7 +45,7 @@ public class WebSocketImp extends OkHttpClient   {
         Button buttonConnect;
         EditText editTextText;
         Button buttonSend;
-        public final String urlSuHao="ws://192.168.1.221/ws";
+        public final String urlSuHao="ws://192.168.1.221:8080/ws";
 
     private String TAG="nk-WebSocketImp";
     public Request request;
@@ -140,6 +140,7 @@ public class WebSocketImp extends OkHttpClient   {
         public Request getRequest(Request request, String url ){
             if (request==null){
                 request = new Request.Builder()
+                        .addHeader("test","111")
                         .get()
                         .url(url)
                         .build();
@@ -167,7 +168,7 @@ public class WebSocketImp extends OkHttpClient   {
                 application.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textViewConnection.setText("连接成功");
+                        textViewConnection.setText("连接成功"+response.toString() );
                     }
                 });
             }
@@ -225,8 +226,11 @@ public class WebSocketImp extends OkHttpClient   {
                 //webSocket.close( 3000,"connect-fail-so-closed" );
                 if (response==null){
                     Log.d(TAG, "onFailure: response-null" );
-                }else
+                }else{
                     Log.d(TAG, "onFailure: response="+response.toString() );
+                   // Log.d(TAG, "onFailure: response body="+response.he );
+                }
+
 
                 application.runOnUiThread( new Runnable() {
                     @Override
@@ -262,6 +266,7 @@ public class WebSocketImp extends OkHttpClient   {
                             textViewConnection.setText( "连续超过"+maxTime+"次失败");
                         }
                     });
+                    GlobalAppContext.toast("多次重连失败");
                     Log.d(TAG, "onFailure: 多次重连失败");
                     webSocket.close(1000,"连接失败超过"+reconTime );
                 }
@@ -285,6 +290,7 @@ public class WebSocketImp extends OkHttpClient   {
 
             getOkHttpClient();
             String url = "ws://"+editTextIp.getText().toString() ;
+            url=urlSuHao;
             request = getRequest(request,url);
             //Request request = new Request.Builder().url( url ).build();
             Log.d(TAG, "socketConect: url="+url );

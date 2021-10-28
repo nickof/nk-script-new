@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -43,6 +44,7 @@ import androidx.core.content.ContextCompat;
 import com.nk.nkscript.tinker.app.BaseBuildInfo;
 import com.nk.nkscript.tinker.app.BuildInfo;
 import com.nk.nkscript.tinker.util.Utils;
+import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.image.capture.ScreenCaptureRequestActivity;
 import com.tencent.tinker.lib.library.TinkerLoadLibrary;
 import com.tencent.tinker.lib.tinker.Tinker;
@@ -51,6 +53,7 @@ import com.tencent.tinker.loader.shareutil.ShareConstants;
 import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 import org.autojs.autojs.nkScript.interImp.EnvScriptRuntime;
+import org.autojs.autojs.nkScript.interImp.AES;
 import org.autojs.autojs.nkScript.interImp.webSocket.WebSocketImp;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -110,6 +113,7 @@ public class MainActivity extends  AppCompatActivity {
     Button buttonConnect;
     Button buttonSend;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -118,15 +122,27 @@ public class MainActivity extends  AppCompatActivity {
         //GlobalAppContext.set( getApplication() );
         EnvScriptRuntime.getAutoJs();
 
+//        Log.d(TAG, "onCreate: key="+AES256Util.DEFAULT_SECRET_KEY  );
+//        Log.d(TAG, "aes="+ AES256Util.encode( AES256Util.DEFAULT_SECRET_KEY,"111" ) );
+
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
         Log.e(TAG, "ARK HOT Running status = " + isARKHotRunning);
         Log.e(TAG, "i am on onCreate classloader:" + MainActivity.class.getClassLoader().toString());
         //test resource change
         Log.e(TAG, "i am on onCreate string:" + getResources().getString(R.string.test_resource));
+
 //        Log.e(TAG, "i am on patch onCreate");
+
+        try {
+            Log.d(TAG, "onCreate: aes="+AES.encrypt("123") );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         mTvMessage = findViewById(R.id.tv_message );
         //askForRequiredPermissions();
+        requestSmsPermission();
+
         requestMyPermissions();
         Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
 
@@ -195,6 +211,19 @@ public class MainActivity extends  AppCompatActivity {
             }
         });
         new WebSocketImp( MainActivity.this );
+
+    }
+
+    public void requestSmsPermission(){
+
+        int REQUEST_CODE_ASK_PERMISSIONS = 123;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasReadSmsPermission = checkSelfPermission(Manifest.permission.READ_SMS);
+            if (hasReadSmsPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_SMS}, REQUEST_CODE_ASK_PERMISSIONS);
+                return;
+            }
+        }
 
     }
 
