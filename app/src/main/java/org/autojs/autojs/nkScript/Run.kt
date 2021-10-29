@@ -39,7 +39,6 @@ open class Run {
     lateinit var sim:SimpleActionAutomatorImp ;
 
     constructor() {
-
         //this.scriptName = scriptName
         imagesImp=ImagesImp()
         images=imagesImp.images
@@ -49,7 +48,6 @@ open class Run {
         node= UiSelectorImp( imagesImp )
 
         sim= SimpleActionAutomatorImp()
-
         appUtils = AppUtilsImp( node.scriptRuntime.app,node )
         // node.scriptRuntime.app
 

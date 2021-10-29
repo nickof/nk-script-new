@@ -13,5 +13,6 @@ package org.autojs.autojs.nkScript.interImp
      var pic1= mapOf<String,String>( "id" to "com.tencent.mm:id/h9a","idx" to "0" )
      var pic2= mapOf<String,String>( "id" to "com.tencent.mm:id/h9a","idx" to "1" )
 
+    var line=mapOf<String,String>( "text" to "LINE" )
 
 }

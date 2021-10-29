@@ -8,6 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 
@@ -138,6 +139,19 @@ public class AES
             return null;
         }
     }
+
+    public static String base64Encrypt(byte[] sSrc ){
+        String encodeString=jackpal.androidterm.compat.Base64.encodeToString(sSrc, jackpal.androidterm.compat.Base64.DEFAULT );
+        encodeString=encodeString.replace("=","").trim();
+        return encodeString;
+    }
+
+    public static String base64Encrypt(String sSrc ){
+        String encodeString=jackpal.androidterm.compat.Base64.encodeToString(sSrc.getBytes(), jackpal.androidterm.compat.Base64.DEFAULT );
+        encodeString=encodeString.replace("=","").trim();
+        return encodeString;
+    }
+
 
     // 解密
     @RequiresApi(api = Build.VERSION_CODES.O)

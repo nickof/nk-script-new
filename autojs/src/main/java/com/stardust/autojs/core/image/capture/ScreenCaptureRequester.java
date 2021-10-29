@@ -7,7 +7,6 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
-
 import com.stardust.app.OnActivityResultDelegate;
 
 /**
@@ -23,7 +22,6 @@ public interface ScreenCaptureRequester {
     }
 
     void request();
-
     void setOnActivityResultCallback(Callback callback);
 
     abstract class AbstractScreenCaptureRequester implements ScreenCaptureRequester {
@@ -39,7 +37,7 @@ public interface ScreenCaptureRequester {
         public void onResult(int resultCode, Intent data) {
             mResult = data;
             if (mCallback != null)
-                mCallback.onRequestResult(resultCode, data);
+                mCallback.onRequestResult( resultCode, data );
         }
 
         @Override
@@ -59,22 +57,27 @@ public interface ScreenCaptureRequester {
         private Activity mActivity;
 
         public ActivityScreenCaptureRequester(Mediator mediator, Activity activity) {
+
             mMediator = mediator;
             mActivity = activity;
-            mMediator.addDelegate(REQUEST_CODE_MEDIA_PROJECTION, this);
+            mMediator.addDelegate( REQUEST_CODE_MEDIA_PROJECTION, this );
+
         }
 
 
         @Override
         public void request() {
-            mActivity.startActivityForResult(((MediaProjectionManager) mActivity.getSystemService(Context.MEDIA_PROJECTION_SERVICE)).createScreenCaptureIntent(), REQUEST_CODE_MEDIA_PROJECTION);
+            mActivity.startActivityForResult(((MediaProjectionManager)
+                    mActivity.getSystemService(Context.MEDIA_PROJECTION_SERVICE)).createScreenCaptureIntent(), REQUEST_CODE_MEDIA_PROJECTION);
         }
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
             mResult = data;
             mMediator.removeDelegate(this);
             onResult(resultCode, data);
+
         }
     }
 

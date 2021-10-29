@@ -3,6 +3,7 @@ package com.stardust.autojs.runtime.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -26,8 +27,9 @@ public class AppUtils {
     private Context mContext;
     private volatile WeakReference<Activity> mCurrentActivity = new WeakReference<>(null);
     private final String mFileProviderAuthority;
+    private SharedPreferences sharedPreferences;
 
-    public AppUtils(Context context) {
+    public AppUtils( Context context ) {
         mContext = context;
         mFileProviderAuthority = null;
     }

@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -35,6 +36,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -58,12 +60,13 @@ import org.autojs.autojs.nkScript.interImp.webSocket.WebSocketImp;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
-public class MainActivity extends  AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
+    
     private static final String TAG = "Tinker.MainActivity";
-
     private TextView mTvMessage = null;
 
     //openCV4Android 需要加载用到
@@ -85,18 +88,18 @@ public class MainActivity extends  AppCompatActivity {
         }
     };
 
-    public boolean killAppBackGround( String packageName ){
+    public boolean killAppBackGround(String packageName) {
 
         Log.d(TAG, "killAppBackGround: 1");
-        ActivityManager manager =  (ActivityManager)  this.getSystemService(this.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> activityes = ((ActivityManager)manager).getRunningAppProcesses();
+        ActivityManager manager = (ActivityManager) this.getSystemService(this.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> activityes = ((ActivityManager) manager).getRunningAppProcesses();
 
         Log.d(TAG, "killAppBackGround: 2");
 
-        for (int iCnt = 0; iCnt < activityes.size(); iCnt++){
-            Log.d(TAG, "killAppBackGround:  "+"APP: "+iCnt +" "+ activityes.get(iCnt).processName);
+        for (int iCnt = 0; iCnt < activityes.size(); iCnt++) {
+            Log.d(TAG, "killAppBackGround:  " + "APP: " + iCnt + " " + activityes.get(iCnt).processName);
 
-            if (activityes.get(iCnt).processName.contains(packageName)){
+            if (activityes.get(iCnt).processName.contains(packageName)) {
                 android.os.Process.sendSignal(activityes.get(iCnt).pid, android.os.Process.SIGNAL_KILL);
                 android.os.Process.killProcess(activityes.get(iCnt).pid);
                 Log.d(TAG, "killAppBackGround: suc..");
@@ -108,20 +111,20 @@ public class MainActivity extends  AppCompatActivity {
     }
 
     TextView textViewConnection;
-    TextView  textViewLogReceive;
+    TextView textViewLogReceive;
 
     Button buttonConnect;
     Button buttonSend;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main );
-        //GlobalAppContext.set( getApplication() );
-        EnvScriptRuntime.getAutoJs();
+        setContentView(R.layout.activity_main);
 
+        EnvScriptRuntime.getAutoJs();
 //        Log.d(TAG, "onCreate: key="+AES256Util.DEFAULT_SECRET_KEY  );
 //        Log.d(TAG, "aes="+ AES256Util.encode( AES256Util.DEFAULT_SECRET_KEY,"111" ) );
 
@@ -130,20 +133,18 @@ public class MainActivity extends  AppCompatActivity {
         Log.e(TAG, "i am on onCreate classloader:" + MainActivity.class.getClassLoader().toString());
         //test resource change
         Log.e(TAG, "i am on onCreate string:" + getResources().getString(R.string.test_resource));
-
-//        Log.e(TAG, "i am on patch onCreate");
+        Log.d(TAG, "onCreate: String test="+("111".getBytes( StandardCharsets.UTF_8 ))   );
 
         try {
-            Log.d(TAG, "onCreate: aes="+AES.encrypt("123") );
+            Log.d(TAG, "onCreate: base64-2="+AES.encrypt("111") );
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        mTvMessage = findViewById(R.id.tv_message );
+        mTvMessage = findViewById( R.id.tv_message  );
         //askForRequiredPermissions();
-        requestSmsPermission();
 
         requestMyPermissions();
+        requestSmsPermission();
         Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
 
         loadPatchButton.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +152,6 @@ public class MainActivity extends  AppCompatActivity {
             public void onClick(View v) {
                 TinkerInstaller.onReceiveUpgradePatch( getApplicationContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
             }
-
         });
 
         Button loadLibraryButton = ( Button ) findViewById( R.id.loadLibrary );
@@ -163,13 +163,10 @@ public class MainActivity extends  AppCompatActivity {
                 TinkerLoadLibrary.installNavitveLibraryABI( getApplicationContext(), "armeabi");
                 System.loadLibrary("stlport_shared");
 
-                // #method 2, for lib/armeabi, just use TinkerInstaller.loadLibrary
-//                TinkerLoadLibrary.loadArmLibrary(getApplicationContext(), "stlport_shared");
-                // #method 3, load tinker patch library directly
-//                TinkerInstaller.loadLibraryFromTinker(getApplicationContext(), "assets/x86", "stlport_shared");
-
             }
         });
+
+
 
         Button cleanPatchButton = (Button) findViewById(R.id.cleanPatch);
 
