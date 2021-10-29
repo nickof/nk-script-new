@@ -3,7 +3,9 @@ package org.autojs.autojs.nkScript.interImp;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Map;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,6 +39,19 @@ public class Okhttp {
             return null;
         }
 
+    }
+
+    public static String  post(String url, Map<String,String> para ){
+        getOkHttpClient();
+        FormBody.Builder builder= new FormBody.Builder();
+        request=new Request.Builder().url(url).build();
+
+        for (String str:
+            para.keySet() ) {
+            builder.add(str,para.get(str) );
+        }
+
+        return  null;
     }
 
 }
