@@ -294,15 +294,18 @@ public abstract class AutoJs {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void request() {
+            
             Activity activity = mAppUtils.getCurrentActivity();
             if (activity instanceof OnActivityResultDelegate.DelegateHost) {
-                ScreenCaptureRequester requester = new ActivityScreenCaptureRequester(
+           /*     ScreenCaptureRequester requester = new ActivityScreenCaptureRequester(
                         ((OnActivityResultDelegate.DelegateHost) activity).getOnActivityResultDelegateMediator(), activity);
                 requester.setOnActivityResultCallback(mCallback);
                 requester.request();
+                ScreenCaptureRequestActivity.request( mContext, mCallback );*/
+                ScreenCaptureRequestActivity.request( mContext, mCallback);
 //               if (true) {
                 } else {
-                   ScreenCaptureRequestActivity.request(mContext, mCallback);
+                   ScreenCaptureRequestActivity.request( mContext, mCallback);
             }
         }
 

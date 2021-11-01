@@ -266,6 +266,10 @@ public class AppUtilsImp {
             if (System.currentTimeMillis()-stTime>timeout ){
                 GlobalAppContext.toast("stop-app-"+packageName+"-fail" );
                 Log.d(TAG, "stopApp: fail-"+packageName );
+                if ( uiSelectorImp.fnode( forceStop )!=null ) {
+                    GlobalAppContext.toast( "app-outtime-未运行-true" );
+                    return true;
+                }
                 return false;
             }
             Thread.sleep(500);

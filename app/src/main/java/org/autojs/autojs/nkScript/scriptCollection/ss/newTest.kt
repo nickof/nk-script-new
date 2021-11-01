@@ -9,6 +9,7 @@ import org.autojs.autojs.nkScript.interImp.Okhttp
 import org.autojs.autojs.nkScript.interImp.SetNode
 import kotlin.math.log
 
+
 class newTest: Run(),InterScript {
 
     var flag=false;

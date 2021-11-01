@@ -73,23 +73,31 @@ public class ImagesImp {
                 //images.initOpenCvIfNeeded()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     if (images.getmScreenCapturer()==null ) {
-                        Log.d(TAG, "requestWaitPermission: request permission");
-                        images.requestScreenCapture(3);
+                        Log.d(TAG, "requestWaitPermission: request permission" );
+                        images.requestScreenCapture(0);
                     }
+
                     while (images.getmScreenCapturer() == null) {
                         Log.d(TAG, "wait-permisson");
-                        try {
+
+                        for (int i=0;i<5;i++){
                             Thread.sleep(1000);
-                            if (System.currentTimeMillis()-stTime>1000*30){
-                                throw new Exception("wait-permission-outtime");
+                            images.requestScreenCapture(0);
+                            try {
+                                Thread.sleep(1000);
+                                if (System.currentTimeMillis()-stTime>1000*30){
+                                    throw new Exception("wait-permission-outtime");
+                                }
+                            } catch ( InterruptedException e ) {
+                                Log.d(TAG, "interrupted");
+                                throw new Exception( "wait-permisson-interrupted" );
+                            } catch ( Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch ( InterruptedException e ) {
-                            Log.d(TAG, "interrupted");
-                            throw new Exception( "wait-permisson-interrupted" );
-                        } catch ( Exception e) {
-                            e.printStackTrace();
                         }
+
                     }
+
                 }
             }
                 images.initOpenCvIfNeeded();

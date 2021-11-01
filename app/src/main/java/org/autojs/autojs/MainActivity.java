@@ -17,10 +17,12 @@
 package org.autojs.autojs;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -28,12 +30,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -61,16 +66,21 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     
-    private static final String TAG = "Tinker.MainActivity";
+    private static final String TAG = "nkScript-Tinker.MainActivity";
     private TextView mTvMessage = null;
+    List<String> mPermissionList = new ArrayList<>();
+    private static final int MY_PERMISSIONS_REQUEST_CODE = 10000;
+    String[] permissions;
 
     //openCV4Android 需要加载用到
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @SuppressLint("LongLogTag")
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
@@ -81,13 +91,37 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
                 default: {
-                    super.onManagerConnected(status);
+                    super.onManagerConnected( status );
                 }
                 break;
             }
         }
     };
 
+    private void getPermissions() {
+        mPermissionList.clear();                                    //清空已经允许的没有通过的权限
+        for (int i = 0; i < permissions.length; i++) {          //逐个判断是否还有未通过的权限
+            if (ContextCompat.checkSelfPermission(MainActivity.this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(permissions[i]);
+            }
+        }
+
+        if (mPermissionList.size() > 0) {                           //有权限没有通过，需要申请
+            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_CODE);
+        } else {
+            Log.e("getPermissions() >>>", "已经授权");     //权限已经都通过了
+        }
+    }
+
+    public void permissionInit(){
+                permissions = new String[]{
+                Manifest.permission.READ_SMS,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                };
+    }
+
+    @SuppressLint("LongLogTag")
     public boolean killAppBackGround(String packageName) {
 
         Log.d(TAG, "killAppBackGround: 1");
@@ -112,50 +146,51 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textViewConnection;
     TextView textViewLogReceive;
-
     Button buttonConnect;
     Button buttonSend;
 
-
+    @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         EnvScriptRuntime.getAutoJs();
+
 //        Log.d(TAG, "onCreate: key="+AES256Util.DEFAULT_SECRET_KEY  );
 //        Log.d(TAG, "aes="+ AES256Util.encode( AES256Util.DEFAULT_SECRET_KEY,"111" ) );
+        permissionInit();
+        getPermissions();
 
         boolean isARKHotRunning = ShareTinkerInternals.isArkHotRuning();
         Log.e(TAG, "ARK HOT Running status = " + isARKHotRunning);
         Log.e(TAG, "i am on onCreate classloader:" + MainActivity.class.getClassLoader().toString());
         //test resource change
         Log.e(TAG, "i am on onCreate string:" + getResources().getString(R.string.test_resource));
-        Log.d(TAG, "onCreate: String test="+("111".getBytes( StandardCharsets.UTF_8 ))   );
 
         try {
             Log.d(TAG, "onCreate: base64-2="+AES.encrypt("111") );
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mTvMessage = findViewById( R.id.tv_message  );
-        //askForRequiredPermissions();
+         mTvMessage = findViewById( R.id.tv_message  );
 
-        requestMyPermissions();
-        requestSmsPermission();
-        Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
 
+       // edit_tel.setOn
+
+//        requestMyPermissions();
+//        requestSmsPermission();
+
+ /*       Button loadPatchButton = (Button) findViewById(R.id.loadPatch);
         loadPatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TinkerInstaller.onReceiveUpgradePatch( getApplicationContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
             }
-        });
+        });*/
 
-        Button loadLibraryButton = ( Button ) findViewById( R.id.loadLibrary );
-
+   /*     Button loadLibraryButton = ( Button ) findViewById( R.id.loadLibrary );
         loadLibraryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,21 +199,17 @@ public class MainActivity extends AppCompatActivity {
                 System.loadLibrary("stlport_shared");
 
             }
-        });
+        });*/
 
-
-
-        Button cleanPatchButton = (Button) findViewById(R.id.cleanPatch);
-
+    /*    Button cleanPatchButton = (Button) findViewById(R.id.cleanPatch);
         cleanPatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tinker.with(getApplicationContext()).cleanPatch();
             }
-        });
+        });*/
 
-        Button killSelfButton = (Button) findViewById(R.id.killSelf);
-
+   /*     Button killSelfButton = (Button) findViewById(R.id.killSelf);
         killSelfButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,9 +217,9 @@ public class MainActivity extends AppCompatActivity {
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
+*/
 
-        Button buildInfoButton = (Button) findViewById(R.id.showInfo);
-
+    /*    Button buildInfoButton = (Button) findViewById(R.id.showInfo);
         buildInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,19 +227,42 @@ public class MainActivity extends AppCompatActivity {
                 ScreenCaptureRequestActivity.requestKillApp(getApplicationContext(),"org.autojs.autojs");
                 //killAppBackGround("jp.naver.line.android");
             }
-        });
+        });*/
+
 
         Button  button_open_accessibility = (Button) findViewById(R.id.open_accessibility );
-
         button_open_accessibility.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //showInfo(MainActivity.this);
-                getApplication().startActivity( new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                getApplication().startActivity( new Intent( Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
-        new WebSocketImp( MainActivity.this );
 
+
+        //new WebSocketImp( MainActivity.this );
+
+    }
+
+    public void saveTel(){
+        EditText edit_tel=(EditText)findViewById( R.id.edit_tel );
+        edit_tel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+        });
     }
 
     public void requestSmsPermission(){
@@ -224,11 +278,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean hasPermissionDismiss = false;      //有权限没有通过
+
+        if (MY_PERMISSIONS_REQUEST_CODE == requestCode) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == -1) {
+                    hasPermissionDismiss = true;   //发现有未通过权限
+                    break;
+                }
+            }
+        }
+
+        if (hasPermissionDismiss) {                //如果有没有被允许的权限
+            //假如存在有没被允许的权限,可提示用户手动设置 或者不让用户继续操作
+            Log.d(TAG, "onRequestPermissionsResult: 有权限未通过");
+        } else {
+            Log.d(TAG, "onRequestPermissionsResult: 已全部授权");
+        }
+    }
+
     private void askForRequiredPermissions() {
         if (Build.VERSION.SDK_INT < 23) {
             return;
         }
-        if (!hasRequiredPermissions()) {
+        if ( !hasRequiredPermissions() ) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
     }

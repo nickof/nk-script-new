@@ -3,6 +3,7 @@ package org.autojs.autojs.nkScript;
 import android.util.Log;
 
 import com.stardust.app.GlobalAppContext;
+import com.stardust.autojs.runtime.app.AppUtils;
 import com.stardust.util.UiHandler;
 
 import org.autojs.autojs.nkScript.interImp.InterMy;

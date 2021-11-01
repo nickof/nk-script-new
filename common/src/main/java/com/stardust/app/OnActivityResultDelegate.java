@@ -45,7 +45,7 @@ public interface OnActivityResultDelegate {
 
         public void removeDelegate(OnActivityResultDelegate delegate) {
             if (mDelegates.remove(delegate)) {
-                mSpecialDelegate.removeAt(mSpecialDelegate.indexOfValue(delegate));
+                mSpecialDelegate.removeAt( mSpecialDelegate.indexOfValue( delegate ) );
             }
         }
     }

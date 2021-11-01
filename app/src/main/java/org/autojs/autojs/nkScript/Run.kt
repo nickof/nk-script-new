@@ -15,16 +15,18 @@ import com.stardust.automator.UiObject
 import org.autojs.autojs.nkScript.interImp.*
 import org.autojs.autojs.nkScript.scriptCollection.ss.newTest
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 open class Run {
 
-    var scriptName="ss.newTest"
+    var scriptName="ScDemo.ScDemo"
 
     lateinit var listExecutorService: ArrayList<ExecutorService>;
     lateinit var poolMain: ExecutorService
     lateinit var poolSub: ExecutorService
     open var TAG:String="nkScript-Run"
+
     var setNode=SetNode();
     //var listExecutorService = arrayListOf<ExecutorService>();
 
@@ -39,6 +41,7 @@ open class Run {
     lateinit var sim:SimpleActionAutomatorImp ;
 
     constructor() {
+
         //this.scriptName = scriptName
         imagesImp=ImagesImp()
         images=imagesImp.images
@@ -66,8 +69,8 @@ open class Run {
         //新建线程池
         poolMain = Executors.newFixedThreadPool(1)
         poolSub = Executors.newFixedThreadPool(1)
-        listExecutorService= ArrayList();
 
+        listExecutorService= ArrayList();
         //poolMain = InterMy.ThreadStart( { jk2() }, 1 )
        // val clazz = Class.forName("org.autojs.autojs.nkScript.scriptConllection.test.class")
 
@@ -79,7 +82,7 @@ open class Run {
 
             poolMain = InterMy.ThreadStart(  { method.invoke(obj); } , 1 )
           //  poolMain = InterMy.ThreadStart(  { scriptRun() } , 1 )
-           // poolSub = InterMy.ThreadStart(  { jk2() } , 1 )
+             poolSub = InterMy.ThreadStart(  { jk2() } , 1 )
             listExecutorService.add( poolMain );
             listExecutorService.add( poolSub );
             ThreadpoolScriptManager.setListExecutorServices( listExecutorService );
@@ -99,7 +102,6 @@ open class Run {
 //        var obj=clazz.newInstance()
         //method.invoke(obj)
         //Looper.loop()
-
     }
 
     fun requestPermission(){
@@ -154,13 +156,12 @@ open class Run {
                   var rect=uiObject.bounds();
                   rect.set( rect.left,rect.top,rect.left+5,rect.bottom )
                   sim.clickRect( rect );
+                  node.waitFalse( nod.permissionScreen )
               }
-//            if (node.clickXy( nod.permissionScreen )!=null){
-////                if (node.waitFalse( nod.permissionScreen )!=null)
-////                    break;
-//            }
+
             toast( "click-permission-"+(10- index) )
             Thread.sleep( 1000 )
+
         }
 
         //images.requestScreenCapture(0);
@@ -175,8 +176,8 @@ open class Run {
             GlobalAppContext.toast( "watch: run-ver="+ver +";time=" +i )
             Log.d( TAG,"ver="+ver);
             node.waitFalseEx( nod.permissionScreen )
-            //imagesImp.captureSaveImageToGallery(
 
+            //imagesImp.captureSaveImageToGallery(
 /*
             try {
                 var ret= node.fnode(setNode.ss设置 );

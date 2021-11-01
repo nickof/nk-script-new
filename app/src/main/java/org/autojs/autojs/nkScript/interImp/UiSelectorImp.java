@@ -4,6 +4,8 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import com.stardust.app.GlobalAppContext;
 import com.stardust.autojs.core.accessibility.AccessibilityBridge;
 import com.stardust.autojs.core.accessibility.SimpleActionAutomator;
@@ -56,6 +58,11 @@ public class UiSelectorImp {
 
     public  UiObject swipeNodeRightToLeft( Object nodeCondition ){
         return swipeNode(nodeCondition,"hori",-0.05f,0.95f,300,500);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public boolean press(int x, int y, int delay){
+        return simpleActionAutomator.press(x,y,delay);
     }
 
     public boolean powerDialog(){

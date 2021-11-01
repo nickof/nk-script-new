@@ -10,33 +10,33 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <TextView
+<!--    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="Sample patch!"/>
+        android:text="Sample patch!"/>-->
 
     <TextView
         android:id="@+id/tv_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_above="@+id/open_accessibility"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:visibility="gone" />
 
-    <Button
+ <!--   <Button
         android:id="@+id/loadPatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/tv_message"
-        android:text="load patch"/>
-
-    <Button
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:text="load patch" />
+-->
+  <!--  <Button
         android:id="@+id/loadLibrary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,32 +44,33 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/loadPatch"
         android:text="load library"/>
-
-    <Button
+-->
+ <!--   <Button
         android:id="@+id/cleanPatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/loadLibrary"
-        android:text="clean patch"/>
-    <Button
+        android:text="clean patch"/>-->
+
+<!--    <Button
         android:id="@+id/killSelf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/cleanPatch"
-        android:text="kill self"/>
+        android:text="kill self"/>-->
 
-    <Button
+<!--    <Button
         android:id="@+id/showInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/killSelf"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:text="show info" />
+        android:text="show info" />-->
 
     <Button
         android:id="@+id/open_accessibility"
@@ -77,16 +78,29 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/showInfo"
         android:text="开无障碍"/>
 
-
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/open_accessibility"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/open_accessibility"
+            android:orientation="vertical">
+
+            <EditText
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_tel"
+                android:hint="本机号码"
+                >
+            </EditText>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/bt_connection"

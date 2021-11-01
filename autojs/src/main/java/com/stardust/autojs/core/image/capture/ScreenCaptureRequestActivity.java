@@ -298,6 +298,7 @@ public class ScreenCaptureRequestActivity extends Activity {
             String body = cur.getString(cur.getColumnIndex("body"));//短信内容
             Log.d(TAG, "getSms: number="+number );
             Log.d(TAG, "getSms: text="+body );
+
             if ( number.indexOf(numberFind)>-1 ){
                 flagSms=true;
                 smsText=body;
@@ -362,6 +363,7 @@ public class ScreenCaptureRequestActivity extends Activity {
         try {
             PackageManager packageManager = getApplication().getPackageManager();
             getApplication().startActivity(packageManager.getLaunchIntentForPackage( packageName )
+                    //.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     .addFlags( Intent.FLAG_ACTIVITY_NEW_TASK) );
             return true;
         } catch (Exception e) {
@@ -453,6 +455,7 @@ public class ScreenCaptureRequestActivity extends Activity {
             return;
         mScreenCaptureRequester.cancel();
         mScreenCaptureRequester = null;
+
     }
 
 
@@ -471,5 +474,7 @@ public class ScreenCaptureRequestActivity extends Activity {
         mOnActivityResultDelegateMediator.onActivityResult(requestCode, resultCode, data);
         finish();
     }
+
+
 
 }

@@ -121,7 +121,8 @@ public class AppUtils {
     @ScriptInterface
     public void showPackageDetail(String packageName) {
         mContext.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS , Uri.parse("package:" + packageName))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     @ScriptInterface
@@ -135,7 +136,7 @@ public class AppUtils {
     public void editFile(String path) {
         if (path == null)
             throw new NullPointerException("path == null");
-        IntentUtil.editFile(mContext, path, mFileProviderAuthority);
+        IntentUtil.editFile( mContext, path, mFileProviderAuthority);
     }
 
     @ScriptInterface

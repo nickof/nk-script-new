@@ -25,6 +25,11 @@ public class SimpleActionAutomatorImp {
         simpleActionAutomator=scriptRuntime.automator;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public boolean press(int x, int y, int time ){
+        return simpleActionAutomator.press( x,y,time );
+    }
+
     public  boolean click(int x,int y){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return simpleActionAutomator.click(x,y);
