@@ -2,7 +2,9 @@ package org.autojs.autojs.nkScript.interImp;
 
 import android.app.Application;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -115,6 +117,18 @@ public class InterMy {
             executorService.shutdownNow();
         }
         return executorService;
+    }
+
+    public static void writeConfig(Context context,String spKey,String key, String value){
+        SharedPreferences sharedPreferences=context.getSharedPreferences(spKey,context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(key,value);
+        editor.commit();
+    }
+
+    public static String readConfig(Context context,String spKey,String key, String value){
+        SharedPreferences sharedPreferences=context.getSharedPreferences(spKey,context.MODE_PRIVATE);
+        return sharedPreferences.getString( key,value );
     }
 
     public static void setClip(String str){

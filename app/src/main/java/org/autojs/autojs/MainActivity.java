@@ -61,6 +61,7 @@ import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
 
 import org.autojs.autojs.nkScript.interImp.EnvScriptRuntime;
 import org.autojs.autojs.nkScript.interImp.AES;
+import org.autojs.autojs.nkScript.interImp.InterMy;
 import org.autojs.autojs.nkScript.interImp.webSocket.WebSocketImp;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
          mTvMessage = findViewById( R.id.tv_message  );
-
+        saveTel();
 
        // edit_tel.setOn
 
@@ -245,8 +246,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveTel(){
+
         EditText edit_tel=(EditText)findViewById( R.id.edit_tel );
-        edit_tel.addTextChangedListener(new TextWatcher() {
+        String tel=InterMy.readConfig( getApplicationContext(),"script","tel","" );
+        if (tel!=""){
+            edit_tel.setText(tel);
+        }
+
+        edit_tel.addTextChangedListener( new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -259,7 +266,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                InterMy.writeConfig(getApplicationContext(),"script","tel",edit_tel.getText().toString() );
 
+                Log.d(TAG, "afterTextChanged:  readconfig="
+                +InterMy.readConfig(getApplicationContext(),"script","tel","" ));
             }
 
         });

@@ -66,6 +66,7 @@ public class AppUtilsImp {
         }
     }
 
+
     public void writeConfig(String key,String value){
         getSp();
         SharedPreferences.Editor editor=sharedPreferences.edit();
