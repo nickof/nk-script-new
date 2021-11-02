@@ -3,6 +3,8 @@ package org.autojs.autojs.nkScript.interImp.webSocket;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Environment;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,10 @@ import org.autojs.autojs.nkScript.ThreadpoolScriptManager;
 import org.autojs.autojs.nkScript.interImp.InterMy;
 import org.autojs.autojs.nkScript.model.ShareDataScript;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -84,6 +90,51 @@ public class WebSocketImp extends OkHttpClient   {
 
         getOkHttpClient();
         testRunSocket();
+
+    }
+
+    private void writeFile(Response response,String fileName) {
+
+        InputStream is = null;
+        FileOutputStream fos = null;
+        is = response.body().byteStream();
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File file = new File( path, fileName );
+
+        try {
+
+            fos = new FileOutputStream(file);
+            byte[] bytes = new byte[1024];
+            int len = 0;
+            //获取下载的文件的大小
+            long fileSize = response.body().contentLength();
+            long sum = 0;
+            int porSize = 0;
+
+            while ((len = is.read(bytes)) != -1) {
+                fos.write(bytes);
+                sum += len;
+                porSize = (int) ( (sum * 1.0f / fileSize ) * 100 );
+  /*              Message message = handler.obtainMessage(1);
+                message.arg1 = porSize;
+                handler.sendMessage(message);*/
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.i("myTag", "下载成功");
 
     }
 

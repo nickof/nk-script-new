@@ -282,6 +282,10 @@ public class UiSelectorImp {
 
                 if(simpleActionAutomator.click( x,y ) )
                     Log.d(TAG, "clickXy: true");
+                else{
+                    Log.d(TAG, "clickXy: click-uiObject");
+                }
+
 
             }
         }else
@@ -347,6 +351,12 @@ public class UiSelectorImp {
         int randomNumber;
         randomNumber = (int) (((max - min + 1) * Math.random() + min));
         return randomNumber;
+    }
+
+    public long r_long(long min, long max) {
+        int randomNumber;
+        randomNumber = (int) ((max - min + 1) * Math.random() + min);
+        return (long) randomNumber;
     }
 
 //    public boolean waitFalseEx( Object nodeCondition ) throws Exception {
@@ -628,8 +638,6 @@ public class UiSelectorImp {
         return null;
     }
 
-
-
     public  UiObjectCollection  fnodeAll (Map<String,String> nodeCondition){
 
         UiSelector uiSelector=set( nodeCondition );
@@ -756,8 +764,10 @@ public class UiSelectorImp {
     public UiObject getParent( UiObject uiObject,int levelNum ){
         for ( int i=0;i<levelNum;i++  ) {
             uiObject=uiObject.parent();
-            if ( uiObject==null )
+            if ( uiObject==null ){
+                Log.d(TAG, "getParent: null"  );
                 return null;
+            }
         }
         Log.d(TAG, "getParent: "+uiObject.text()+","+uiObject.bounds()  );
         return uiObject;

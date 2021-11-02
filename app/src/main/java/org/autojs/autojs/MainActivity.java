@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class MainActivity extends AppCompatActivity {
     
     private static final String TAG = "nkScript-Tinker.MainActivity";
@@ -81,20 +82,20 @@ public class MainActivity extends AppCompatActivity {
 
     //openCV4Android 需要加载用到
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+
         @SuppressLint("LongLogTag")
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
-//                    mOpenCvCameraView.enableView();
-//                    mOpenCvCameraView.setOnTouchListener(ColorBlobDetectionActivity.this);
                 }
                 break;
                 default: {
                     super.onManagerConnected( status );
                 }
                 break;
+
             }
         }
     };
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         mPermissionList.clear();                                    //清空已经允许的没有通过的权限
         for (int i = 0; i < permissions.length; i++) {          //逐个判断是否还有未通过的权限
             if (ContextCompat.checkSelfPermission(MainActivity.this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
-                mPermissionList.add(permissions[i]);
+                mPermissionList.add( permissions[i] );
             }
         }
 
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (activityes.get(iCnt).processName.contains(packageName)) {
                 android.os.Process.sendSignal(activityes.get(iCnt).pid, android.os.Process.SIGNAL_KILL);
-                android.os.Process.killProcess(activityes.get(iCnt).pid);
+                android.os.Process.killProcess(activityes.get(iCnt).pid );
                 Log.d(TAG, "killAppBackGround: suc..");
                 return true;
             }
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
 
     }
+
 
     TextView textViewConnection;
     TextView textViewLogReceive;

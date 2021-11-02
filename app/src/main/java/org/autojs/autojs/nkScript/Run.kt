@@ -12,6 +12,8 @@ import com.stardust.autojs.core.image.ColorFinder
 import com.stardust.autojs.runtime.api.Images
 import com.stardust.autojs.runtime.app.AppUtils
 import com.stardust.automator.UiObject
+import dalvik.system.DexClassLoader
+import org.autojs.autojs.MainActivity
 import org.autojs.autojs.nkScript.interImp.*
 import org.autojs.autojs.nkScript.scriptCollection.ss.newTest
 import java.util.concurrent.ExecutorService
@@ -20,7 +22,7 @@ import java.util.concurrent.Executors
 
 open class Run {
 
-    var scriptName="ScDemo.ScDemo"
+    var scriptName="scDemo.ScDemo"
 
     lateinit var listExecutorService: ArrayList<ExecutorService>;
     lateinit var poolMain: ExecutorService
@@ -76,7 +78,16 @@ open class Run {
 
         try {
 
+      /*      var context=GlobalAppContext.get()
+            var optfile = context.getDir("opt_dex",0);
+            var  libfile=context.getDir("lib_path",0);
+            var parentClassloader= MainActivity::class.java.classLoader
+
+            var dexClassLoader=DexClassLoader("/sdcard/test2.dex",optfile.getAbsolutePath(),
+                    libfile.getAbsolutePath(),parentClassloader );*/
+
            var clazz =  Class.forName("org.autojs.autojs.nkScript.scriptCollection."+scriptName  )
+            //var clazz=dexClassLoader.loadClass("org.autojs.autojs.nkScript.scriptCollection."+scriptName)
            var method=clazz.getDeclaredMethod("script");
            var obj=clazz.newInstance()
 
