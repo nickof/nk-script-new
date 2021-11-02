@@ -6,9 +6,7 @@ class scriptData {
     ,"text" to "保存")
     var m美团详情页=mapOf<String,String>( "text" to "美团详情页" )
     var l领取任务=mapOf<String,String>( "text" to "领取任务" )
+    var s首页=  mutableListOf<MutableMap<String,String> >(  )
 
-    var tt=mutableMapOf(
-            "text" to "5737952"
-    )
 
 }
